@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+.shadow-right-fade {
+	box-shadow: 0 0 10px rgba(20, 30, 70, 0.3); /* Adjust the color and opacity as needed */
+}
+@media screen and (min-width: 768px) and (max-width: 840px) {
+  nav {
+	padding-inline: 0.25rem !important;
+  };
+  nav header {
+	gap: 0.5rem !important;
+	padding-inline: 0rem !important;
+  }
+}
+.marquee
+{
+	animation: scroll 10s linear infinite;
+	overflow: hidden;
+}
+.syllabus 
+{
+	animation: vibrate 1s linear 3; 
+}
+.syllabus2
+{
+	animation: vibrate2 1s linear 3; 
+}
+@keyframes vibrate2 
+{
+	0% { transform: translateX(0) }
+	25% { transform: translateX(5px) }
+	50% { transform: translateX(-5px) }
+	75% { transform: translateX(5px) }
+	100% { transform: translateX(0) }
+}
+@keyframes vibrate {
+	0% { 
+		transform: scale(1); 
+	}
+	25% { 
+			transform: scale(1.1) }
+	50% { 
+		transform: scale(1); }
+	75% { 
+		transform: scale(0.9); 
+	}
+	100% {  
+		transform: scale(1)
+	}
+}
