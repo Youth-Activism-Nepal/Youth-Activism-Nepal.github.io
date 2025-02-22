@@ -31,17 +31,17 @@ export default function FooterSection() {
                                 {[
                                     [
                                         "facebook",
-                                        "https://www.facebook.com/profile.php?id=61554706883546&mibextid=kFxxJD",
-                                    ],
-                                    [
-                                        "twitter",
-                                        "https://x.com/CS50xNepal?t=zhIVQxpn57jrtVVsYZJG0w&s=09",
+                                        "https://www.facebook.com/youthactivismnepal",
                                     ],
                                     [
                                         "linkedin",
-                                        "https://www.linkedin.com/company/cs50x-nepal/",
+                                        "https://www.linkedin.com/company/youth-activism-nepal/",
                                     ],
-                                    ["discord", "#"],
+                                    [
+                                        "instagram",
+                                        "https://www.instagram.com/youthactivismnepal",
+                                    ],
+                                    // ["discord", "#"],
                                 ].map(([network, url], index) => (
                                     <li key={index}>
                                         <SocialIcon

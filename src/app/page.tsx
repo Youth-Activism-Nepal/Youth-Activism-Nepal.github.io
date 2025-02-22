@@ -16,7 +16,7 @@ export default function Home() {
                         <p className="w-full sm:w-96 font-semibold text-2xl text-center sm:text-left sm:text-base md:text-regular lg:text-2xl text-cs50Yellow mt-3">
                             Engage, Empower and Impact
                         </p>
-                        <p className="md:w-[80%] text-sm text-textBlue text-center sm:text-left font-light pt-4">
+                        <p className="md:w-[80%] text-sm text-textBlue text-justify sm:text-justify font-light pt-4">
                             A youth-led non-profit organization that mobilizes
                             community-based projects in Nepal. Our vision is to
                             create a better Nepal by providing basic health,

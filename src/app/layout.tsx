@@ -34,7 +34,7 @@ export default function RootLayout({
 			</head>
 			<body className={`bg-offWhite ${poppins.className}`}>
 				<Navbar />
-				<Registration />
+				{/* <Registration /> */}
 				{children}
 				<Footer />
 			</body>

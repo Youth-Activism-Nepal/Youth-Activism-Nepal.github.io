@@ -22,8 +22,8 @@ export default function App() {
 
     const menuItems = [
         ["/", "Home"],
-        // ["/projects", "Projects"],
         ["/team", "Team"],
+        ["/projects", "Projects"],
     ];
 
     // IntersectionObserver for setting the active section
