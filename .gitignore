@@ -63,6 +63,6 @@ test-timings.json
 #DKC
 /src/app/about
 /src/app/past-project
-/src/app/projects
+# /src/app/projects
 /src/app/sponsors
 /src/app/test
