@@ -24,6 +24,7 @@ export default function App() {
         ["/", "Home"],
         ["/team", "Team"],
         ["/projects", "Projects"],
+        ["/donate", "Donate"],
     ];
 
     // IntersectionObserver for setting the active section
