@@ -21,21 +21,21 @@ export default function Donate() {
                 </p>
                 <div className="text-sm py-2 px-6 w-[50px] mx-auto text-textBlue">
                     <ul className="list-disc list-inside text-sm inline-block text-left">
-                        <li className="text-center">
+                        <p className="text-center">
                             <strong>Bank Name:</strong> NABIL BANK LIMITED
-                        </li>
-                        <li className="text-center">
+                        </p>
+                        <p className="text-center">
                             <strong>Account Name:</strong> Youth Activism Nepal
-                        </li>
-                        <li className="text-center">
+                        </p>
+                        <p className="text-center">
                             <strong>Account Number:</strong> 26901017500012
-                        </li>
-                        <li className="text-center">
+                        </p>
+                        <p className="text-center">
                             <strong>SWIFT Code:</strong> NARBNPKA
-                        </li>
-                        <li className="text-center">
+                        </p>
+                        <p className="text-center">
                             <strong>Branch:</strong> Kanchanpur, Saptari, Nepal
-                        </li>
+                        </p>
                     </ul>
                 </div>
 
