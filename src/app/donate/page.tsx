@@ -19,7 +19,7 @@ export default function Donate() {
                     Please use the following bank account details to make a
                     donation:
                 </p>
-                <div className="text-sm py-2 px-6 w-[50px] mx-auto text-textBlue">
+                <div className="text-sm py-2 px-6 w-[500px] mx-auto text-textBlue">
                     <div className="list-disc list-inside text-sm inline-block text-left">
                         <p className="text-center">
                             <strong>Bank Name:</strong> NABIL BANK LIMITED
