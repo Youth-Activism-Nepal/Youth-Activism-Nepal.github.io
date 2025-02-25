@@ -43,10 +43,10 @@ export default function Donate() {
                     If you have any questions or need further assistance, please
                     contact us at{" "}
                     <a
-                        href="mailto:info@youthactivismnepal.org"
+                        href="mailto:youthactvismnepal@gmail.com"
                         className="text-blue-500 underline"
                     >
-                        info@youthactivismnepal.org
+                        youthactvismnepal@gmail.com
                     </a>
                     .
                 </p>
