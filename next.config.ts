@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   devIndicators: {
     appIsrStatus: false,
+  },
+  images: {
+    domains: ["i.postimg.cc"],  // Add the allowed image domains here
   },
 };
 

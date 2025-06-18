@@ -28,11 +28,11 @@ export default function App({ Teams }: { Teams: ITeam[] }) {
                                             className="object-cover rounded-lg"
                                             src={
                                                 team.image
-                                                    ? `/images/projects/${team.image}`
-                                                    : "/images/projects/default.jpg"
                                             }
                                             width={270}
                                             height={200}
+                                            loading="lazy"
+                                            // onError={() => setImgSrc("/fallback.jpg")} // use a local fallback image
                                         />
                                     </CardBody>
                                     <CardHeader className="flex-col items-start">

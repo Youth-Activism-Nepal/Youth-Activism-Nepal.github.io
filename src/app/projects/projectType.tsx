@@ -4,4 +4,8 @@ export interface ITeam {
 	name: string;
 	role?: string;
 	id: string;
+	heading?: string;
+	subheading?: string;
+	content?: string;
+	hashtags?: string;
 }
