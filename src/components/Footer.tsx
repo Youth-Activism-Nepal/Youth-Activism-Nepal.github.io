@@ -6,8 +6,8 @@ import { SocialIcon } from "react-social-icons";
 
 export default function FooterSection() {
     return (
-        <div className="top-12 relative bg-offYellow">
-            <section className="py-10 bg-offYellow sm:pt-16 lg:pt-24">
+        <div className="top-12 relative bg-black text-white">
+            <section className="py-10 bg-black sm:pt-16 lg:pt-24">
                 <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
                     <div className="grid grid-cols-3 md:col-span-3 lg:grid-cols-3 gap-y-16 gap-x-12">
                         <div className="col-span-2 md:col-span-2 lg:col-span-2 lg:pr-8">
@@ -22,7 +22,7 @@ export default function FooterSection() {
                                 </Link>
                             </div>
                             <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8">
-                                <p className="text-sm leading-relaxed text-textBlue mt-7">
+                                <p className="text-sm leading-relaxed text-white mt-7">
                                     Youth Activism Nepal is dedicated to
                                     fostering excellence, innovation, and skill
                                     in youth activism, empowering students to
@@ -32,7 +32,7 @@ export default function FooterSection() {
                         </div>
 
                         <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8 text-right">
-                            <h2 className="text-xl font-semibold text-textBlue">
+                            <h2 className="text-xl font-semibold text-white">
                                 Contact Us
                             </h2>
                             <p className="text-sm mt-4">
@@ -82,7 +82,7 @@ export default function FooterSection() {
                     </div>
                 </div>
             </section>
-                    <p className="text-sm text-center text-gray-600 py-4">
+                    <p className="text-sm text-center text-white py-4">
                         © Copyright 2024, Youth Activism Nepal. All rights
                         reserved.
                     </p>

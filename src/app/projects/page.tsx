@@ -1,4 +1,6 @@
+// src/app/projects/page.tsx
 'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import CardItem from '@/app/projects/card';
 
@@ -14,8 +16,8 @@ export default function Projects() {
 
     async function fetchProjects() {
       try {
-        const response = await fetch('http://data.youthactivismnepal.org.np/data/Projects');
-        const json = await response.json();
+        const res = await fetch('http://data.youthactivismnepal.org.np/data/Projects');
+        const json = await res.json();
         const projects = json.data;
         cacheRef.current = projects;
         setTeamList(projects);
@@ -28,7 +30,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <div className="top-12 bg-offWhite">
+    <div className="bg-offWhite min-h-screen px-4">
       <CardItem Teams={teamList} />
     </div>
   );

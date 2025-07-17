@@ -6,8 +6,8 @@ import Link from "next/link";
 export default function App({ Teams }: { Teams: ITeam[] }) {
     return (
         <>
-            <div className="overflow-hidden mt-4 px-6">
-                <h1 className="flex text-4xl text-center font-black items-center justify-center  text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-900 to-red-950">
+            <div className="overflow-hidden mt-10 px-6">
+                <h1 className="flex text-4xl text-center font-black items-center justify-center text-red-600">
                     Our Projects
                 </h1>
                 <p className="text-sm py-2 px-6 sm:px-28 lg:w-[80%] mx-auto text-center text-textBlue">

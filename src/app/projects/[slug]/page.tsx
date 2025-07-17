@@ -1,72 +1,60 @@
-// src/app/projects/[slug]/page.tsx
-
-import Image from "next/image";
-import { notFound } from "next/navigation";
+// app/projects/[slug]/page.tsx
+import React from "react";
+import ProjectSection from "@/app/projects/[slug]/ProjectSection";
 import { ITeam } from "@/app/projects/projectType";
 
-async function getProject(slug: string): Promise<ITeam | null> {
-  const res = await fetch("http://data.youthactivismnepal.org.np/data/Projects", {
-    cache: "no-store",
+async function getProjectBySlug(slug: string): Promise<ITeam> {
+  const res = await fetch(`http://data.youthactivismnepal.org.np/data/Projects/${slug}`, {
+    next: { revalidate: 60 },
   });
 
-  if (!res.ok) return null;
+  if (!res.ok) {
+    throw new Error("Failed to fetch project data");
+  }
 
-  const data = await res.json();
-  const matched = data.data.find(
-    (item: ITeam) => item.id?.toLowerCase() === slug.toLowerCase()
-  );
+  const json = await res.json();
 
-  return matched ?? null;
+  if (!json.project) {
+    throw new Error("Project data not found");
+  }
+
+  return json.project;
 }
 
-export default async function ProjectPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>; // params is a Promise
-}) {
-  const { slug } = await params; // await params here
+export async function generateStaticParams() {
+  const res = await fetch("http://data.youthactivismnepal.org.np/data/Projects/");
+  if (!res.ok) {
+    throw new Error("Failed to fetch projects list");
+  }
 
-  const project = await getProject(slug);
-  if (!project) return notFound();
+  const json = await res.json();
+  const projects = json.data;
 
-  return (
-    <section>
-      <div className="flex flex-col justify-center items-center max-w-4xl mx-auto py-8">
-        <Image
-          src={project.image || "/images/YANLOGO.png"}
-          alt={project.name}
-          width={400}
-          height={400}
-          quality={100}
-          className="rounded-lg w-full h-auto"
-        />
-      </div>
+  if (!Array.isArray(projects)) {
+    throw new Error("Projects data is not an array");
+  }
 
-      <div className="flex flex-col justify-center items-center m-10 px-4 max-w-4xl mx-auto">
-        {project.heading && (
-          <p className="font-bold text-3xl text-center bg-clip-text bg-gradient-to-r from-green-600 to-green-950">
-            {project.heading}
-          </p>
-        )}
+  return projects.map((project) => ({
+    slug: project.id,
+  }));
+}
 
-        {project.subheading && (
-          <p className="w-full font-semibold text-2xl text-center text-cs50Yellow mt-3">
-            {project.subheading}
-          </p>
-        )}
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  try {
+    const { slug } = await params;
+    const project = await getProjectBySlug(slug);
 
-        {project.content?.split("\n").map((para, i) => (
-          <p key={i} className="text-sm text-textBlue text-justify font-light pt-4">
-            {para.trim()}
-          </p>
-        ))}
-
-        {project.hashtags && (
-          <p className="text-sm text-textBlue text-justify font-light pt-4">
-            <strong>{project.hashtags}</strong>
-          </p>
-        )}
-      </div>
-    </section>
-  );
+    return (
+      <main className="py-10">
+        <ProjectSection project={project} />
+      </main>
+    );
+  } catch (error) {
+    return (
+      <main className="py-10 text-center text-red-600">
+        <h1>Failed to load project</h1>
+        <p>{(error as Error).message}</p>
+      </main>
+    );
+  }
 }

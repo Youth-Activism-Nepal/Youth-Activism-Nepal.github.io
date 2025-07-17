@@ -3,4 +3,5 @@ export interface ITeam {
 	badge?: string;
 	name: string;
 	role: string;
+	year: number;
 }

@@ -1,13 +1,13 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
-import { Poppins } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Registration from '@/components/Registration';
 import Footer from '@/components/Footer';
 
-const poppins = Poppins({
-	weight: '400',
+const montserrat = Montserrat({
+	weight: '500',
 	subsets: ['latin'],
 });
 
@@ -32,7 +32,7 @@ export default function RootLayout({
 					sizes="<generated>"
 				/>
 			</head>
-			<body className={`bg-offWhite ${poppins.className}`}>
+			<body className={`bg-offWhite ${montserrat.className}`}>
 				<Navbar />
 				{/* <Registration /> */}
 				{children}

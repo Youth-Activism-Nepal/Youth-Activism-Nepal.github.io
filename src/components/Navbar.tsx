@@ -61,11 +61,11 @@ export default function App() {
     return (
         <Navbar
             maxWidth="full"
-            className="navbar z-50 px-0 sm:px-0 md:px-6 font-medium bg-offYellow text-textBlue overflow-x-hidden"
+            className="navbar z-50 px-0 py-2 sm:px-0 md:px-0 font-medium bg-black text-white overflow-x-hidden"
             onMenuOpenChange={setIsMenuOpen}
         >
             {/* Navbar Brand */}
-            <NavbarContent>
+            <NavbarContent className="px-4">
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
@@ -73,21 +73,21 @@ export default function App() {
                 <NavbarBrand>
                     <Link href="/" className="flex items-center gap-2">
                         <YANLogo />
-                        Youth Activism Nepal
+                        <div className="pt-4">Youth Activism Nepal</div>
                     </Link>
                 </NavbarBrand>
             </NavbarContent>
 
             {/* Navbar Items */}
             <NavbarContent
-                className="hidden sm:flex sm:gap-1 md:gap-2 lg:gap-4 xl:gap-6"
+                className="hidden px-4 pt-4 sm:flex sm:gap-1 md:gap-2 lg:gap-4 xl:gap-6"
                 justify="center"
             >
                 {menuItems.map(([link, title], index) => (
                     <NavbarItem
-                        className={`h-[40%] flex items-center text-textBlue transition-all duration-200 hover:text-primaryRed focus:text-primaryRed ${
+                        className={`h-[40%] flex items-center text-white transition-all duration-200 hover:text-green-400 focus:text-green-400 ${
                             isActive(link)
-                                ? "border-b-3 rounded-sm border-primaryPurple text-primaryPurple hover:border-primaryRed focus:border-primaryRed"
+                                ? "border-b-3 rounded-sm border-blue-400 text-blue-400 hover:border-green-400 focus:border-green-400"
                                 : ""
                         } ${title === "Syllabus" ? "syllabus" : ""}`}
                         key={`${title}-${index}`}

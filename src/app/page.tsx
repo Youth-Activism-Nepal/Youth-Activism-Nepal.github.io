@@ -6,14 +6,15 @@ import { Link, Button } from "@nextui-org/react";
 export default function Home() {
     return (
         <>
+        <div className="px-4 mx-auto sm:px-6 lg:px-8">
             <section className="h-full sm:h-[84.5vh] items-center flex bg-offWhite overflow-hidden px-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 mt-10 sm:mt-0">
                 {/* Heading/Introduction */}
                 <div className="flex flex-col items-center sm:flex-row md:gap-0 lg:gap-8 xl:gap-11">
-                    <div className="w-full flex flex-col items-center sm:items-start align-center justify-center sm:w-1/2">
-                        <p className="font-bold text-7xl md:text-4xl sm:text-3xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-950">
+                    <div className="w-full flex flex-col items-center sm:items-start align-center justify-center sm:w-2/3">
+                        <p className="text-red-600 font-bold text-7xl md:text-4xl sm:text-3xl lg:text-5xl bg-clip-text">
                             Youth Activism Nepal
                         </p>
-                        <p className="w-full sm:w-96 font-semibold text-2xl text-center sm:text-left sm:text-base md:text-regular lg:text-2xl text-cs50Yellow mt-3">
+                        <p className="w-full sm:w-128 font-semibold text-3xl text-left sm:text-left sm:text-base md:text-regular lg:text-3xl text-cs50Yellow mt-3">
                             Engage, Empower and Impact
                         </p>
                         <p className="md:w-[80%] text-sm text-textBlue text-justify sm:text-justify font-light pt-4">
@@ -48,6 +49,7 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+            </div>
         </>
     );
 }
