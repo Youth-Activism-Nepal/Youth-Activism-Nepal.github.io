@@ -7,7 +7,7 @@ export default function Donate() {
     const [images, setImages] = useState<string[]>([]);
 
     useEffect(() => {
-        fetch("http://data.youthactivismnepal.org.np/data/Projects/")
+        fetch("https://data.youthactivismnepal.org.np/data/Projects/")
             .then((res) => res.json())
             .then((data) => {
                 if (data?.data?.length) {

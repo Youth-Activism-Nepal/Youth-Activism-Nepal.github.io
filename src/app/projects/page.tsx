@@ -16,7 +16,7 @@ export default function Projects() {
 
     async function fetchProjects() {
       try {
-        const res = await fetch('http://data.youthactivismnepal.org.np/data/Projects');
+        const res = await fetch('https://data.youthactivismnepal.org.np/data/Projects');
         const json = await res.json();
         const projects = json.data;
         cacheRef.current = projects;

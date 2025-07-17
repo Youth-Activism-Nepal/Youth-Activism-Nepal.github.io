@@ -4,7 +4,7 @@ import ProjectSection from "@/app/projects/[slug]/ProjectSection";
 import { ITeam } from "@/app/projects/projectType";
 
 async function getProjectBySlug(slug: string): Promise<ITeam> {
-  const res = await fetch(`http://data.youthactivismnepal.org.np/data/Projects/${slug}`, {
+  const res = await fetch(`https://data.youthactivismnepal.org.np/data/Projects/${slug}`, {
     next: { revalidate: 60 },
   });
 
@@ -22,7 +22,7 @@ async function getProjectBySlug(slug: string): Promise<ITeam> {
 }
 
 export async function generateStaticParams() {
-  const res = await fetch("http://data.youthactivismnepal.org.np/data/Projects/");
+  const res = await fetch("https://data.youthactivismnepal.org.np/data/Projects/");
   if (!res.ok) {
     throw new Error("Failed to fetch projects list");
   }

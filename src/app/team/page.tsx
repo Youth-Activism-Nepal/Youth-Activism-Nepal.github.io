@@ -11,7 +11,7 @@ export default function Team() {
 	useEffect(() => {
 		const fetchTeam = async () => {
 			try {
-				const res = await fetch('http://data.youthactivismnepal.org.np/data/Team', {
+				const res = await fetch('https://data.youthactivismnepal.org.np/data/Team', {
 					cache: 'no-store',
 				});
 				if (!res.ok) throw new Error('Failed to fetch team');
@@ -21,7 +21,7 @@ export default function Team() {
 				console.error(err);
 			} finally {
 				setLoading(false);
-			}
+			} 
 		};
 
 		fetchTeam();
