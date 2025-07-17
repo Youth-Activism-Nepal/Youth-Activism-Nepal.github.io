@@ -24,7 +24,7 @@ export default function Donate() {
 
     return (
         <section>
-            <div className="h-full text-center items-center bg-offWhite px-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 mt-10 sm:mt-0 mt-10">
+            <div className="h-full text-center items-center bg-offWhite px-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 sm:mt-0 mt-10">
                 <div className="flex flex-col justify-center items-center m-10 ">
                     <h1 className="flex text-4xl font-black items-center justify-center text-red-600">
                         Donate to Youth Activism Nepal

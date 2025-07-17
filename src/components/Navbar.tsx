@@ -61,7 +61,7 @@ export default function App() {
     return (
         <Navbar
             maxWidth="full"
-            className="navbar z-50 px-0 py-2 sm:px-0 md:px-0 font-medium bg-black text-white overflow-x-hidden"
+            className="navbar z-50 px-0 py-2 sm:px-0 md:px-0 font-medium bg-[#DB1920] text-white overflow-x-hidden"
             onMenuOpenChange={setIsMenuOpen}
         >
             {/* Navbar Brand */}

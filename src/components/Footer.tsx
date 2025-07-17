@@ -6,8 +6,8 @@ import { SocialIcon } from "react-social-icons";
 
 export default function FooterSection() {
     return (
-        <div className="top-12 relative bg-black text-white">
-            <section className="py-10 bg-black sm:pt-16 lg:pt-24">
+        <div className="top-12 relative bg-[#DB1920] text-white">
+            <section className="py-10 bg-[#DB1920] sm:pt-16 lg:pt-24">
                 <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
                     <div className="grid grid-cols-3 md:col-span-3 lg:grid-cols-3 gap-y-16 gap-x-12">
                         <div className="col-span-3 sm:col-span-2 lg:pr-8">
