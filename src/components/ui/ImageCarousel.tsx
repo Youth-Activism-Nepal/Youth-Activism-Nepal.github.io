@@ -35,8 +35,7 @@ export default function ImageCarousel({ images }: Props) {
 
   return (
     <div
-      className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-lg"
-      style={{ height: "50vh" }}
+      className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-lg h-[30vh] sm:h-[45vh] md:h-[50vh] lg:h-[50vh] xl:h-[50vh] 2xl:h-[50vh]"
     >
       <div className="relative h-full">
         {images.map((src, index) => {

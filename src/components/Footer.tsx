@@ -10,8 +10,8 @@ export default function FooterSection() {
             <section className="py-10 bg-black sm:pt-16 lg:pt-24">
                 <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
                     <div className="grid grid-cols-3 md:col-span-3 lg:grid-cols-3 gap-y-16 gap-x-12">
-                        <div className="col-span-2 md:col-span-2 lg:col-span-2 lg:pr-8">
-                            <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8">
+                        <div className="col-span-3 sm:col-span-2 lg:pr-8">
+                            <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8 flex justify-center sm:justify-start">
                                 <Link href="/">
                                     <Image
                                         src="/icon.svg"
@@ -22,7 +22,7 @@ export default function FooterSection() {
                                 </Link>
                             </div>
                             <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8">
-                                <p className="text-sm leading-relaxed text-white mt-7">
+                                <p className="text-sm leading-relaxed text-white mt-7 text-center sm:text-right">
                                     Youth Activism Nepal is dedicated to
                                     fostering excellence, innovation, and skill
                                     in youth activism, empowering students to
@@ -31,7 +31,7 @@ export default function FooterSection() {
                             </div>
                         </div>
 
-                        <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8 text-right">
+                        <div className="col-span-3 sm:col-span-1 lg:col-span-1 lg:pr-8 text-center sm:text-right">
                             <h2 className="text-xl font-semibold text-white">
                                 Contact Us
                             </h2>
@@ -82,10 +82,9 @@ export default function FooterSection() {
                     </div>
                 </div>
             </section>
-                    <p className="text-sm text-center text-white py-4">
-                        © Copyright 2024, Youth Activism Nepal. All rights
-                        reserved.
-                    </p>
+            <p className="text-sm text-center text-white py-4">
+                © Copyright 2024, Youth Activism Nepal. All rights reserved.
+            </p>
         </div>
     );
 }

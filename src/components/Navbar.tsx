@@ -101,9 +101,9 @@ export default function App() {
                     </NavbarItem>
                 ))}
             </NavbarContent>
-
+            
             {/* Navbar Menu for Mobile */}
-            <NavbarMenu className="bg-offYellow text-textBlue font-medium h-auto-important">
+            <NavbarMenu className="bg-offYellow text-textBlue font-medium h-auto-important pt-10">
                 {menuItems.map(([link, title], index) => (
                     <NavbarMenuItem
                         className={`hover:text-primaryRed focus:text-primaryRed transition-all duration-200 px-2 ${
