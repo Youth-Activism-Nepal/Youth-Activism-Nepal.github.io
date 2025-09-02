@@ -39,7 +39,7 @@ export default function FooterSection() {
                                 <strong>Email:</strong>{" "}
                                 <a
                                     href="mailto:youthactvismnepal@gmail.com"
-                                    className="text-blue-500 underline"
+                                    className="text-white underline"
                                 >
                                     youthactvismnepal@gmail.com
                                 </a>

@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     appIsrStatus: false,
   },
   images: {
-    domains: ["i.postimg.cc"],  // Add the allowed image domains here
+    domains: ["i.postimg.cc", "youthactivismnepal.org.np"],  // Add the allowed image domains here
   },
 };
 
