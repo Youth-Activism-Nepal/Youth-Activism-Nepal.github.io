@@ -6,8 +6,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ["i.postimg.cc", "youthactivismnepal.org.np"],  // Add the allowed image domains here
-  },
-  output: 'standalone', // NOT 'export'
+  }
 };
 
 export default nextConfig;
