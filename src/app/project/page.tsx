@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProjectSection from "@/app/project/ProjectSection";
 import type { ITeam } from "@/app/projects/projectType";
@@ -13,7 +13,23 @@ function Spinner() {
   );
 }
 
+/**
+ * Page component only sets up Suspense (required for useSearchParams)
+ */
 export default function ProjectPage() {
+  return (
+    <main className="mx-auto max-w-6xl px-4 py-10">
+      <Suspense fallback={<Spinner />}>
+        <ProjectPageInner />
+      </Suspense>
+    </main>
+  );
+}
+
+/**
+ * All hooks that depend on search params live inside the Suspense boundary.
+ */
+function ProjectPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const slug = useMemo(() => searchParams.get("slug") ?? "", [searchParams]);
@@ -64,12 +80,8 @@ export default function ProjectPage() {
 
   if (!slug) return null;
 
-  return (
-    <>
-      <main className="mx-auto max-w-6xl px-4 py-10">
-        {state === "loading" && <Spinner />}
-        {state === "done" && data && <ProjectSection project={data} />}
-      </main>
-    </>
-  );
+  if (state === "loading") return <Spinner />;
+  if (state === "done" && data) return <ProjectSection project={data} />;
+
+  return null;
 }
