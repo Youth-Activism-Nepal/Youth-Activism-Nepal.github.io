@@ -235,9 +235,12 @@ export default function About() {
                                                 )}
 
                                                 {item.text && (
-                                                    <p className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify">
+                                                    <div
+                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
+                                                        style={{ whiteSpace: "pre-line" }}
+                                                    >
                                                         {item.text}
-                                                    </p>
+                                                    </div>
                                                 )}
 
                                                 {/* GROUPED: render image inside the same column, protected */}

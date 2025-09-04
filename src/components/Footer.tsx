@@ -24,9 +24,13 @@ export default function FooterSection() {
                             <div className="col-span-1 md:col-span-1 lg:col-span-1 lg:pr-8">
                                 <p className="text-sm leading-relaxed text-white mt-7 text-center sm:text-left">
                                     Youth Activism Nepal is dedicated to
-                                    fostering excellence, innovation, and skill
-                                    in youth activism, empowering students to
-                                    shape a transformative and impactful future.
+                                    fostering excellence, innovation, and
+                                    entrepreneurial spirit in youth
+                                    activism—equipping students with the
+                                    mindset, skills, and confidence to become
+                                    self-reliant leaders, advance open ideas,
+                                    and drive voluntary, bottom-up solutions for
+                                    a freer and more prosperous future.
                                 </p>
                             </div>
                         </div>
