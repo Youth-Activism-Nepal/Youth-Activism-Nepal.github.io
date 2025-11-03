@@ -22,6 +22,7 @@ export default function App() {
   const menuItems: [string, string][] = [
     ["/", "About"],
     ["/team", "Team"],
+    ["/partners", "Partners"],
     ["/projects", "Projects"],
     ["/donate", "Donate"],
   ];
