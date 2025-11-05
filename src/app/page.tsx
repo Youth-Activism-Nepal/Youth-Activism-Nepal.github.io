@@ -12,11 +12,13 @@ type MainItem = {
     image?: string;
     height?: string | number;
     height_vh?: string | number;
+    isHtml?: boolean; // 👈 tells us if `text` should be treated as HTML
 };
 
 type Section =
     | { kind: "single"; items: MainItem[] }
-    | { kind: "group"; together: string; items: MainItem[] };
+    | { kind: "group"; together: string; items: MainItem[] }
+    | { kind: "images" }; // special marker for the carousel section
 
 export default function About() {
     const [items, setItems] = useState<MainItem[]>([]);
@@ -38,6 +40,11 @@ export default function About() {
     };
 
     const sectionMinHeight = (section: Section) => {
+        if (section.kind === "images") {
+            // Let the images section size itself to its content
+            return {};
+        }
+
         const heights = section.items.map((it) =>
             heightVH(it?.height_vh ?? it?.height)
         );
@@ -60,7 +67,9 @@ export default function About() {
                     setImages(imageUrls);
                 }
             })
-            .catch((err) => console.error("Error fetching project data:", err));
+            .catch((err) =>
+                console.error("Error fetching project data:", err)
+            );
     }, []);
 
     // Fetch main sections
@@ -96,11 +105,22 @@ export default function About() {
     }, []);
 
     // Group consecutive items with the same non-empty `together`
+    // and treat { id: "Images" } as a special "images" section
     const sections: Section[] = useMemo(() => {
         const out: Section[] = [];
         let i = 0;
+
         while (i < items.length) {
             const current = items[i];
+            const id = (current.id || "").trim().toLowerCase();
+
+            // Special marker for the carousel section
+            if (id === "images") {
+                out.push({ kind: "images" });
+                i++;
+                continue;
+            }
+
             const tag = (current.together || "").trim();
 
             if (tag) {
@@ -123,11 +143,11 @@ export default function About() {
             out.push({ kind: "single", items: [current] });
             i++;
         }
+
         return out;
     }, [items]);
 
     return (
-        // Keep your original page paddings and centering
         <div className="px-4 mx-auto sm:px-6 lg:px-8">
             {/* Loading */}
             {loading && (
@@ -162,6 +182,37 @@ export default function About() {
                 !error &&
                 sections.map((section, sIdx) => {
                     const bgClass = getBgClass(sIdx);
+
+                    // Special "Images" section: render Activities / Carousel here
+                    if (section.kind === "images") {
+                        return (
+                            <div
+                                key={`section-images-${sIdx}`}
+                                className={`${bgClass} w-screen relative left-1/2 right-1/2 -mx-[50vw] flex items-center`}
+                            >
+                                <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-10 w-full max-w-7xl mx-auto">
+                                    <div
+                                        id="images"
+                                        className="h-full text-center items-center bg-white p-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 sm:mt-0 mt-10"
+                                    >
+                                        <div className="flex flex-col justify-center items-center m-10">
+                                            <h1 className="flex text-5xl m-5 font-black items-center justify-center text-red-600 sm:text-3xl lg:text-5xl">
+                                                Our Activities
+                                            </h1>
+                                            {images.length > 0 && (
+                                                <div className="w-full mb-6">
+                                                    <ImageCarousel
+                                                        images={images}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    }
+
                     const isGroup = section.kind === "group";
 
                     // For single sections, detect image on the (only) item
@@ -178,7 +229,7 @@ export default function About() {
                         <div
                             key={`section-${sIdx}-${section.kind}-${
                                 "together" in section
-                                    ? section.together
+                                    ? (section as any).together
                                     : "single"
                             }`}
                             className={`${bgClass} w-screen relative left-1/2 right-1/2 -mx-[50vw] flex items-center`}
@@ -219,31 +270,51 @@ export default function About() {
                                                     hasImage || isGroup
                                                         ? "items-start text-left"
                                                         : "items-center text-center",
-                                                    "min-w-0", // allow wrapping instead of overflow
+                                                    "min-w-0",
                                                 ].join(" ")}
                                             >
-                                                {/* Text */}
+                                                {/* Heading */}
                                                 <p className="text-red-600 font-bold text-5xl sm:text-3xl lg:text-5xl">
                                                     {item.heading ||
                                                         "Youth Activism Nepal"}
                                                 </p>
 
+                                                {/* Subheading */}
                                                 {item.subheading && (
                                                     <p className="w-full sm:w-128 font-semibold text-xl sm:text-base lg:text-2xl text-cs50Yellow mt-3">
                                                         {item.subheading}
                                                     </p>
                                                 )}
 
-                                                {item.text && (
+                                                {/* Text: plain or HTML */}
+                                                {item.text &&
+                                                (!item.isHtml ? (
                                                     <div
                                                         className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
                                                         style={{ whiteSpace: "pre-line" }}
                                                     >
                                                         {item.text}
                                                     </div>
+                                                ) : (
+                                                    <div
+                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: item.text,
+                                                        }}
+                                                    />
+                                                ))}
+
+
+                                                {item.text && item.isHtml && (
+                                                    <div
+                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: item.text,
+                                                        }}
+                                                    />
                                                 )}
 
-                                                {/* GROUPED: render image inside the same column, protected */}
+                                                {/* GROUPED: render image inside the same column */}
                                                 {isGroup && hasImage && (
                                                     <div className="mt-6 self-center flex justify-center items-center shrink-0">
                                                         <Image
@@ -264,7 +335,7 @@ export default function About() {
                                         );
                                     })}
 
-                                    {/* SINGLE: if it has an image, render a separate protected image column */}
+                                    {/* SINGLE: if it has an image, render separate image column */}
                                     {!isGroup &&
                                         imgItemSingle &&
                                         typeof imgItemSingle !== "boolean" &&
@@ -280,7 +351,7 @@ export default function About() {
                                                     height={400}
                                                     className="max-w-full h-auto object-contain max-h-[50vh]"
                                                     quality={100}
-                                                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 33vw, 80vw"
+                                                    sizes="(min-width: 1024px) 33vw, 80vw"
                                                 />
                                             </div>
                                         )}
@@ -289,20 +360,6 @@ export default function About() {
                         </div>
                     );
                 })}
-
-            {/* Activities / Carousel */}
-            <div className="h-full text-center items-center bg-white p-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 sm:mt-0 mt-10">
-                <div className="flex flex-col justify-center items-center m-10">
-                    <h1 className="flex text-4xl font-black items-center justify-center text-red-600">
-                        Our Activities
-                    </h1>
-                    {images.length > 0 && (
-                        <div className="w-full mb-6">
-                            <ImageCarousel images={images} />
-                        </div>
-                    )}
-                </div>
-            </div>
         </div>
     );
 }
