@@ -67,9 +67,7 @@ export default function About() {
                     setImages(imageUrls);
                 }
             })
-            .catch((err) =>
-                console.error("Error fetching project data:", err)
-            );
+            .catch((err) => console.error("Error fetching project data:", err));
     }, []);
 
     // Fetch main sections
@@ -88,9 +86,20 @@ export default function About() {
                         `Request failed: ${res.status} ${res.statusText}`
                     );
                 const json = await res.json();
-                const data = Array.isArray(json?.data)
-                    ? (json.data as MainItem[])
-                    : [];
+
+                const rawData = Array.isArray(json?.data) ? json.data : [];
+
+                // 🔑 Normalize API shape → ensure isHtml is a proper boolean
+                const data: MainItem[] = rawData.map((raw: any) => ({
+                    ...raw,
+                    isHtml:
+                        typeof raw.isHtml === "boolean"
+                            ? raw.isHtml
+                            : raw.isHTML === true ||
+                              raw.isHTML === "true" ||
+                              raw.isHTML === 1,
+                }));
+
                 if (!cancelled) setItems(data);
             } catch (err: any) {
                 if (!cancelled)
@@ -287,31 +296,21 @@ export default function About() {
                                                 )}
 
                                                 {/* Text: plain or HTML */}
-                                                {item.text &&
-                                                (!item.isHtml ? (
-                                                    <div
-                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
-                                                        style={{ whiteSpace: "pre-line" }}
-                                                    >
-                                                        {item.text}
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: item.text,
-                                                        }}
-                                                    />
-                                                ))}
-
-
-                                                {item.text && item.isHtml && (
-                                                    <div
-                                                        className="md:w-[80%] text-sm text-textBlue font-light pt-4 text-justify sm:text-justify"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: item.text,
-                                                        }}
-                                                    />
+                                                {item.text && (
+                                                    item.isHtml ? (
+                                                        // Treat as HTML (your grid, etc.)
+                                                        <div
+                                                            className="w-full md:w-4/5 pt-4"
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: item.text,
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        // Treat as normal text
+                                                        <div className="md:w-4/5 text-sm sm:text-base text-textBlue font-light pt-4 text-justify sm:text-justify whitespace-pre-line">
+                                                            {item.text}
+                                                        </div>
+                                                    )
                                                 )}
 
                                                 {/* GROUPED: render image inside the same column */}
