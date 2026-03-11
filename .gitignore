@@ -45,6 +45,10 @@ test/traces
 examples/**/out
 examples/**/.env*.local
 
+# Next.js env files (keep local machine config out of git)
+.env.local
+.env.*.local
+
 pr-stats.md
 test-timings.json
 
