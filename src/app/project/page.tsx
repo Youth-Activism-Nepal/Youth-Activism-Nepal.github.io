@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProjectSection from "@/app/project/ProjectSection";
 import type { ITeam } from "@/app/projects/projectType";
+import { API_BASE_URL } from "@/config/api";
 
 function Spinner() {
   return (
@@ -50,7 +51,7 @@ function ProjectPageInner() {
       try {
         setState("loading");
         const res = await fetch(
-          `https://data.youthactivismnepal.org.np/data/Projects/${slug}`,
+          `${API_BASE_URL}/data/Projects/${encodeURIComponent(slug)}`,
           { cache: "no-store" }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

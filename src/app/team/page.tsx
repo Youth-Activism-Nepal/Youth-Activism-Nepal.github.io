@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import CardItem from '@/app/team/card';
 import { ITeam } from './team_list_type';
+import { API_BASE_URL } from '@/config/api';
 
 export default function Team() {
 	const [teamList, setTeamList] = useState<ITeam[]>([]);
@@ -11,7 +12,7 @@ export default function Team() {
 	useEffect(() => {
 		const fetchTeam = async () => {
 			try {
-				const res = await fetch('https://data.youthactivismnepal.org.np/data/Team', {
+				const res = await fetch(`${API_BASE_URL}/data/Team`, {
 					cache: 'no-store',
 				});
 				if (!res.ok) throw new Error('Failed to fetch team');

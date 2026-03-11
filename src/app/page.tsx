@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
+import { API_BASE_URL } from "@/config/api";
 
 type MainItem = {
     id?: string;
@@ -57,7 +58,7 @@ export default function About() {
 
     // Fetch carousel images
     useEffect(() => {
-        fetch("https://data.youthactivismnepal.org.np/data/Projects/")
+        fetch(`${API_BASE_URL}/data/Projects/`)
             .then((res) => res.json())
             .then((data) => {
                 if (data?.data?.length) {
@@ -77,10 +78,9 @@ export default function About() {
             try {
                 setLoading(true);
                 setError(null);
-                const res = await fetch(
-                    "https://data.youthactivismnepal.org.np/data/Main",
-                    { headers: { Accept: "application/json" } }
-                );
+                const res = await fetch(`${API_BASE_URL}/data/Main`, {
+                    headers: { Accept: "application/json" },
+                });
                 if (!res.ok)
                     throw new Error(
                         `Request failed: ${res.status} ${res.statusText}`

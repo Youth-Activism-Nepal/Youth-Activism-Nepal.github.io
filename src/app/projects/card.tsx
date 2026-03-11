@@ -15,7 +15,8 @@ export default function CardItem({ Teams }: { Teams: ITeam[] }) {
                 change within the community.
             </p>
             <div className="flex justify-center mt-8 mb-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 2xl:gap-20 mx-auto justify-center items-center sm:mt-0">
+                {/* Fewer columns on larger screens so each card is wider and badges/text have more space */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 2xl:gap-16 mx-auto justify-center items-center sm:mt-0">
                     {Teams.map((team) => {
                         const slug = team.id;
                         return (
@@ -49,9 +50,9 @@ export default function CardItem({ Teams }: { Teams: ITeam[] }) {
                                                 {team.role}
                                             </small>
                                         </div>
-                                        <div className="flex flex-row items-left gap-2 flex-wrap">
+                                        <div className="flex flex-row items-left gap-2 flex-wrap mt-1">
                                             {team.badge && (
-                                                <Chip className="bg-textBlue text-white text-xs text-center flex justify-center items-center">
+                                                <Chip className="bg-textBlue text-white text-xs leading-snug text-center flex justify-center items-center whitespace-normal break-words px-2 py-1">
                                                     {team.badge}
                                                 </Chip>
                                             )}

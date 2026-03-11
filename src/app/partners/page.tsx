@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import CardItem from "@/app/partners/card";
 import { PartnerType } from "@/app/partners/partnerType";
+import { API_BASE_URL } from "@/config/api";
 
 export default function Partners() {
   const cacheRef = useRef<PartnerType[] | null>(null);
@@ -16,10 +17,9 @@ export default function Partners() {
 
     async function fetchPartners() {
       try {
-        const res = await fetch(
-          "https://data.youthactivismnepal.org.np/data/Partners",
-          { cache: "no-store" }
-        );
+        const res = await fetch(`${API_BASE_URL}/data/Partners`, {
+          cache: "no-store",
+        });
         const json = await res.json();
 
         // Expecting json.data to be an array compatible with PartnerType

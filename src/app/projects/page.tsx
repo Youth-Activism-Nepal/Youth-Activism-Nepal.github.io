@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import CardItem from "@/app/projects/card";
+import { API_BASE_URL } from "@/config/api";
 
 export default function Projects() {
     const cacheRef = useRef<any[] | null>(null);
@@ -15,9 +16,7 @@ export default function Projects() {
 
         async function fetchProjects() {
             try {
-                const res = await fetch(
-                    "https://data.youthactivismnepal.org.np/data/Projects"
-                );
+                const res = await fetch(`${API_BASE_URL}/data/Projects`);
                 const json = await res.json();
                 const projects = json.data;
                 cacheRef.current = projects;

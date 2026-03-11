@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
+import { API_BASE_URL } from "@/config/api";
 
 export default function Donate() {
     const [images, setImages] = useState<string[]>([]);
 
     useEffect(() => {
-        fetch("https://data.youthactivismnepal.org.np/data/Projects/")
+        fetch(`${API_BASE_URL}/data/Projects/`)
             .then((res) => res.json())
             .then((data) => {
                 if (data?.data?.length) {
