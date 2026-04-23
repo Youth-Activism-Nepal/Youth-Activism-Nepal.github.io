@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
 
 type Project = {
-  id?: string; // may be backend _id or slug
-  _mongoId?: string; // normalized Mongo _id used for updates/deletes
+  id?: string;
+  apiId?: unknown;
+  _mongoId?: string;
   title?: string;
   description?: string;
   image?: string;
@@ -31,6 +32,7 @@ export default function AdminProjectsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [form, setForm] = useState<Project>({
+    id: "",
     name: "",
     badge: "",
     role: "",
@@ -58,10 +60,12 @@ export default function AdminProjectsPage() {
       setError(null);
       const res = await adminFetch("/admin/projects", { method: "GET" });
       if (!res.ok) throw new Error(`Failed to load projects (${res.status})`);
-      const data = (await res.json()) as any[];
-      const normalized: Project[] = data.map((doc) => ({
+      const raw = await res.json();
+      const data = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+      const normalized: Project[] = data.map((doc: any) => ({
         ...doc,
-        _mongoId: doc.id ?? doc._id,
+        apiId: doc?.id,
+        _mongoId: doc?._id,
       }));
       setItems(normalized);
     } catch (err: any) {
@@ -74,6 +78,7 @@ export default function AdminProjectsPage() {
   const resetForm = () => {
     setEditingId(null);
     setForm({
+      id: "",
       name: "",
       badge: "",
       role: "",
@@ -91,6 +96,7 @@ export default function AdminProjectsPage() {
     setEditingId(p._mongoId ?? p.id ?? null);
     setForm({
       ...p,
+      id: p.id ?? "",
       images: Array.isArray(p.images)
         ? p.images.join("\n")
         : typeof p.images === "string"
@@ -131,6 +137,7 @@ export default function AdminProjectsPage() {
     }
 
     const payload: Project = {
+      id: form.id || undefined,
       name: form.name || undefined,
       badge: form.badge || undefined,
       role: form.role || undefined,
@@ -194,6 +201,25 @@ export default function AdminProjectsPage() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  ID (slug)
+                </label>
+                <input
+                  className="w-full border rounded-md px-2 py-1.5 text-sm"
+                  value={form.id ?? ""}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, id: e.target.value }))
+                  }
+                  placeholder="john-galt-school"
+                  required
+                />
+                <p className="mt-1 text-[11px] text-gray-500">
+                  For IT/admin: this ID is the slug used in frontend URLs,
+                  for example /project?slug=john-galt-school. Use lowercase,
+                  numbers, and hyphens only.
+                </p>
+              </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Name
@@ -369,6 +395,7 @@ export default function AdminProjectsPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
+                    <th className="border px-2 py-1 text-left">ID (slug)</th>
                     <th className="border px-2 py-1 text-left">Name</th>
                     <th className="border px-2 py-1 text-left">Role</th>
                     <th className="border px-2 py-1 text-left">Badge</th>
@@ -381,6 +408,15 @@ export default function AdminProjectsPage() {
                       key={p._mongoId ?? p.id ?? `${p.name}-${p.role}-${index}`}
                       className="hover:bg-gray-50"
                     >
+                      <td className="border px-2 py-1">
+                        <div className="break-all max-w-[160px] text-[11px] text-gray-700">
+                          {p.apiId !== undefined && p.apiId !== null && String(p.apiId).trim() !== "" ? (
+                            String(p.apiId)
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </div>
+                      </td>
                       <td className="border px-2 py-1">
                         <div className="font-semibold truncate max-w-[160px]">
                           {p.name || "Untitled"}

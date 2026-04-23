@@ -7,6 +7,7 @@ import { adminFetch, getAdminToken } from "@/lib/adminClient";
 type MainItem = {
   id?: string; // backend _id or slug; we will also normalize _mongoId for updates
   _mongoId?: string;
+  order?: number | null;
   together?: string;
   heading?: string;
   subheading?: string;
@@ -26,6 +27,7 @@ export default function AdminMainPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [form, setForm] = useState<MainItem>({
+    order: null,
     together: "",
     heading: "",
     subheading: "",
@@ -34,6 +36,12 @@ export default function AdminMainPage() {
     height_vh: 80,
     isHtml: false,
   });
+
+  const parseOrder = (value: unknown): number | null => {
+    if (value === null || value === undefined || value === "") return null;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
+  };
 
   useEffect(() => {
     const token = getAdminToken();
@@ -52,12 +60,28 @@ export default function AdminMainPage() {
       if (!res.ok) {
         throw new Error(`Failed to load items (${res.status})`);
       }
-      const data = (await res.json()) as any[];
-      const normalized: MainItem[] = data.map((doc) => ({
+      const raw = await res.json();
+      const data = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+      const normalized: MainItem[] = data.map((doc: any) => ({
         ...doc,
         _mongoId: doc.id ?? doc._id,
+        order: parseOrder(
+          doc.order ?? doc.Order ?? doc.sort_order ?? doc.sortOrder
+        ),
       }));
-      setItems(normalized);
+      const sorted = normalized.sort((a, b) => {
+        const orderA =
+          a.order !== null && a.order !== undefined
+            ? Number(a.order)
+            : Number.MAX_SAFE_INTEGER;
+        const orderB =
+          b.order !== null && b.order !== undefined
+            ? Number(b.order)
+            : Number.MAX_SAFE_INTEGER;
+        if (orderA !== orderB) return orderA - orderB;
+        return (a.heading ?? "").localeCompare(b.heading ?? "");
+      });
+      setItems(sorted);
     } catch (err: any) {
       setError(err.message || "Failed to load items");
     } finally {
@@ -68,6 +92,7 @@ export default function AdminMainPage() {
   const resetForm = () => {
     setEditingId(null);
     setForm({
+      order: null,
       together: "",
       heading: "",
       subheading: "",
@@ -81,6 +106,7 @@ export default function AdminMainPage() {
   const handleEdit = (item: MainItem) => {
     setEditingId(item._mongoId ?? item.id ?? null);
     setForm({
+      order: parseOrder(item.order),
       together: item.together ?? "",
       heading: item.heading ?? "",
       subheading: item.subheading ?? "",
@@ -114,6 +140,10 @@ export default function AdminMainPage() {
     setError(null);
 
     const payload: MainItem = {
+      order:
+        form.order !== null && form.order !== undefined
+          ? Number(form.order)
+          : undefined,
       together: form.together || undefined,
       heading: form.heading || undefined,
       subheading: form.subheading || undefined,
@@ -180,6 +210,24 @@ export default function AdminMainPage() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Order
+                </label>
+                <input
+                  type="number"
+                  className="w-full border rounded-md px-2 py-1.5 text-sm"
+                  value={form.order ?? ""}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      order:
+                        e.target.value === "" ? null : Number(e.target.value),
+                    }))
+                  }
+                  placeholder="1"
+                />
+              </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Group tag (`together`)
@@ -334,7 +382,9 @@ export default function AdminMainPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item, index) => (
+                  {items.map((item, index) => {
+                    const parsedOrder = parseOrder(item.order);
+                    return (
                     <tr
                       key={
                         item._mongoId ??
@@ -343,6 +393,9 @@ export default function AdminMainPage() {
                       }
                       className="hover:bg-gray-50"
                     >
+                      <td className="border px-2 py-1">
+                        {parsedOrder ?? <span className="text-gray-400">—</span>}
+                      </td>
                       <td className="border px-2 py-1">
                         <div className="font-semibold truncate max-w-[160px]">
                           {item.heading || "Untitled"}
@@ -378,7 +431,8 @@ export default function AdminMainPage() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             )}

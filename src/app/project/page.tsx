@@ -6,6 +6,13 @@ import ProjectSection from "@/app/project/ProjectSection";
 import type { ITeam } from "@/app/projects/projectType";
 import { API_BASE_URL } from "@/config/api";
 
+const toSlug = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 function Spinner() {
   return (
     <div className="flex items-center justify-center h-[60vh]">
@@ -54,16 +61,41 @@ function ProjectPageInner() {
           `${API_BASE_URL}/data/Projects/${encodeURIComponent(slug)}`,
           { cache: "no-store" }
         );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (res.ok) {
+          const json = await res.json();
+          const project =
+            json?.project ??
+            json?.data ??
+            (json && typeof json === "object" ? json : null);
 
-        const json = await res.json();
-        const project =
-          json?.project ??
-          json?.data ??
-          (json && typeof json === "object" ? json : null);
+          if (alive && project) {
+            setData(project);
+            setState("done");
+            return;
+          }
+        }
+
+        const listRes = await fetch(`${API_BASE_URL}/data/Projects`, {
+          cache: "no-store",
+        });
+        if (!listRes.ok) throw new Error(`HTTP ${listRes.status}`);
+
+        const listJson = await listRes.json();
+        const list = Array.isArray(listJson?.data) ? listJson.data : [];
+        const project = list.find((item: any) => {
+          const candidateName =
+            typeof item?.name === "string" && item.name.trim()
+              ? item.name
+              : "";
+          return (
+            item?.id === slug ||
+            item?._id === slug ||
+            toSlug(candidateName) === slug
+          );
+        });
 
         if (alive && project) {
-          setData(project);
+          setData(project as ITeam);
           setState("done");
         } else if (alive) {
           router.replace("/projects");

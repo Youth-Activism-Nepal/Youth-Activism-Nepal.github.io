@@ -6,6 +6,7 @@ import { API_BASE_URL } from "@/config/api";
 
 type MainItem = {
     id?: string;
+    order?: number;
     together?: string;
     heading?: string;
     subheading?: string;
@@ -58,17 +59,35 @@ export default function About() {
 
     // Fetch carousel images
     useEffect(() => {
-        fetch(`${API_BASE_URL}/data/Projects/`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.data?.length) {
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/data/Projects/`, {
+                    headers: { Accept: "application/json" },
+                });
+
+                if (!res.ok) {
+                    if (!cancelled) setImages([]);
+                    return;
+                }
+
+                const data = await res.json();
+                if (!cancelled && data?.data?.length) {
                     const imageUrls = data.data
                         .map((project: any) => project.image)
                         .filter((url: string) => !!url);
                     setImages(imageUrls);
                 }
-            })
-            .catch((err) => console.error("Error fetching project data:", err));
+            } catch {
+                // Non-blocking: if carousel API is unreachable, keep page usable.
+                if (!cancelled) setImages([]);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     // Fetch main sections
@@ -90,15 +109,32 @@ export default function About() {
                 const rawData = Array.isArray(json?.data) ? json.data : [];
 
                 // 🔑 Normalize API shape → ensure isHtml is a proper boolean
-                const data: MainItem[] = rawData.map((raw: any) => ({
-                    ...raw,
-                    isHtml:
-                        typeof raw.isHtml === "boolean"
-                            ? raw.isHtml
-                            : raw.isHTML === true ||
-                              raw.isHTML === "true" ||
-                              raw.isHTML === 1,
-                }));
+                const data: MainItem[] = rawData
+                    .map((raw: any, idx: number) => ({
+                        ...raw,
+                        __index: idx,
+                        order:
+                            raw?.order === null || raw?.order === undefined
+                                ? undefined
+                                : Number(raw.order),
+                        isHtml:
+                            typeof raw.isHtml === "boolean"
+                                ? raw.isHtml
+                                : raw.isHTML === true ||
+                                  raw.isHTML === "true" ||
+                                  raw.isHTML === 1,
+                    }))
+                    .sort((a: any, b: any) => {
+                        const ao = Number.isFinite(a.order)
+                            ? (a.order as number)
+                            : Number.MAX_SAFE_INTEGER;
+                        const bo = Number.isFinite(b.order)
+                            ? (b.order as number)
+                            : Number.MAX_SAFE_INTEGER;
+                        if (ao !== bo) return ao - bo;
+                        return a.__index - b.__index;
+                    })
+                    .map(({ __index, ...item }: any) => item);
 
                 if (!cancelled) setItems(data);
             } catch (err: any) {
