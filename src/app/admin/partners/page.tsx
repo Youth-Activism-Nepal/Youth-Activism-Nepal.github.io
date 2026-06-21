@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
+import { normalizePartner } from "@/lib/apiClient";
 
 type Partner = {
   id?: string;
@@ -44,10 +45,13 @@ export default function AdminPartnersPage() {
       const res = await adminFetch("/admin/partners", { method: "GET" });
       if (!res.ok) throw new Error(`Failed to load partners (${res.status})`);
       const data = (await res.json()) as any[];
-      const normalized: Partner[] = data.map((doc) => ({
-        ...doc,
-        _mongoId: doc.id ?? doc._id,
-      }));
+      const normalized: Partner[] = data.map((doc, index) => {
+        const partner = normalizePartner(doc, index);
+        return {
+          ...partner,
+          _mongoId: partner.mongoId ?? partner.id,
+        };
+      });
       setItems(normalized);
     } catch (err: any) {
       setError(err.message || "Failed to load partners");
@@ -305,4 +309,3 @@ export default function AdminPartnersPage() {
     </div>
   );
 }
-

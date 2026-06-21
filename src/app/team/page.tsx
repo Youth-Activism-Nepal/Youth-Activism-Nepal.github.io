@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import CardItem from '@/app/team/card';
 import { ITeam } from './team_list_type';
-import { API_BASE_URL } from '@/config/api';
+import { getTeamMembers } from '@/lib/apiClient';
 
 export default function Team() {
 	const [teamList, setTeamList] = useState<ITeam[]>([]);
@@ -12,12 +12,8 @@ export default function Team() {
 	useEffect(() => {
 		const fetchTeam = async () => {
 			try {
-				const res = await fetch(`${API_BASE_URL}/data/Team`, {
-					cache: 'no-store',
-				});
-				if (!res.ok) throw new Error('Failed to fetch team');
-				const data = await res.json();
-				setTeamList(data.data); // assuming response shape: { data: ITeam[] }
+				const data = (await getTeamMembers()) as ITeam[];
+				setTeamList(data);
 			} catch (err) {
 				console.error(err);
 			} finally {

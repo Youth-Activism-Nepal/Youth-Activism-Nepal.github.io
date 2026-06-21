@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
+import { normalizeMainItem } from "@/lib/apiClient";
 
 type MainItem = {
   id?: string; // backend _id or slug; we will also normalize _mongoId for updates
@@ -62,13 +63,14 @@ export default function AdminMainPage() {
       }
       const raw = await res.json();
       const data = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
-      const normalized: MainItem[] = data.map((doc: any) => ({
-        ...doc,
-        _mongoId: doc.id ?? doc._id,
-        order: parseOrder(
-          doc.order ?? doc.Order ?? doc.sort_order ?? doc.sortOrder
-        ),
-      }));
+      const normalized: MainItem[] = data.map((doc: any) => {
+        const item = normalizeMainItem(doc);
+        return {
+          ...item,
+          _mongoId: item.mongoId ?? item.id,
+          order: parseOrder(item.order),
+        };
+      });
       const sorted = normalized.sort((a, b) => {
         const orderA =
           a.order !== null && a.order !== undefined
@@ -442,4 +444,3 @@ export default function AdminMainPage() {
     </div>
   );
 }
-

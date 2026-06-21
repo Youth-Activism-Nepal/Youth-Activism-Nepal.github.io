@@ -2,19 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
-import { API_BASE_URL } from "@/config/api";
+import { getProjects } from "@/lib/apiClient";
 
 export default function Donate() {
     const [images, setImages] = useState<string[]>([]);
 
     useEffect(() => {
-        fetch(`${API_BASE_URL}/data/Projects/`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.data?.length) {
-                    const imageUrls = data.data
-                        .map((project: any) => project.image)
-                        .filter((url: string) => !!url); // filter out empty/null
+        getProjects()
+            .then((projects) => {
+                if (projects.length) {
+                    const imageUrls = projects
+                        .map((project) => project.image)
+                        .filter((url): url is string => !!url);
                     setImages(imageUrls);
                 }
             })

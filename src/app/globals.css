@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -12,6 +13,10 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+body {
+  font-family: var(--font-sans);
 }
 .shadow-right-fade {
 	box-shadow: 0 0 10px rgba(20, 30, 70, 0.3); /* Adjust the color and opacity as needed */

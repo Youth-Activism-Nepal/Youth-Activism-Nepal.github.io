@@ -3,23 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
+import { normalizeProject, type Project as ApiProject } from "@/lib/apiClient";
 
-type Project = {
-  id?: string;
-  apiId?: unknown;
+type Project = ApiProject & {
   _mongoId?: string;
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
-  extra?: Record<string, unknown> | null;
-  name?: string;
-  badge?: string;
-  role?: string;
-  heading?: string;
-  subheading?: string;
-  content?: string;
-  hashtags?: string;
   images?: string[] | string | null;
 };
 
@@ -62,11 +49,13 @@ export default function AdminProjectsPage() {
       if (!res.ok) throw new Error(`Failed to load projects (${res.status})`);
       const raw = await res.json();
       const data = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
-      const normalized: Project[] = data.map((doc: any) => ({
-        ...doc,
-        apiId: doc?.id,
-        _mongoId: doc?._id,
-      }));
+      const normalized: Project[] = data.map((doc: any, index: number) => {
+        const project = normalizeProject(doc, index);
+        return {
+          ...project,
+          _mongoId: project.mongoId,
+        };
+      });
       setItems(normalized);
     } catch (err: any) {
       setError(err.message || "Failed to load projects");
@@ -410,8 +399,8 @@ export default function AdminProjectsPage() {
                     >
                       <td className="border px-2 py-1">
                         <div className="break-all max-w-[160px] text-[11px] text-gray-700">
-                          {p.apiId !== undefined && p.apiId !== null && String(p.apiId).trim() !== "" ? (
-                            String(p.apiId)
+                          {p.id && String(p.id).trim() !== "" ? (
+                            String(p.id)
                           ) : (
                             <span className="text-gray-400">—</span>
                           )}
@@ -462,4 +451,3 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
-

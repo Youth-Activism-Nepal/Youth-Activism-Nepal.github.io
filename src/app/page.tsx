@@ -2,19 +2,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
-import { API_BASE_URL } from "@/config/api";
+import { getMainItems, getProjects, type MainItem as ApiMainItem } from "@/lib/apiClient";
 
-type MainItem = {
-    id?: string;
-    order?: number;
-    together?: string;
-    heading?: string;
-    subheading?: string;
-    text?: string;
-    image?: string;
+type MainItem = ApiMainItem & {
     height?: string | number;
     height_vh?: string | number;
-    isHtml?: boolean; // 👈 tells us if `text` should be treated as HTML
 };
 
 type Section =
@@ -63,18 +55,9 @@ export default function About() {
 
         (async () => {
             try {
-                const res = await fetch(`${API_BASE_URL}/data/Projects/`, {
-                    headers: { Accept: "application/json" },
-                });
-
-                if (!res.ok) {
-                    if (!cancelled) setImages([]);
-                    return;
-                }
-
-                const data = await res.json();
-                if (!cancelled && data?.data?.length) {
-                    const imageUrls = data.data
+                const projects = await getProjects();
+                if (!cancelled && projects.length) {
+                    const imageUrls = projects
                         .map((project: any) => project.image)
                         .filter((url: string) => !!url);
                     setImages(imageUrls);
@@ -97,32 +80,10 @@ export default function About() {
             try {
                 setLoading(true);
                 setError(null);
-                const res = await fetch(`${API_BASE_URL}/data/Main`, {
-                    headers: { Accept: "application/json" },
-                });
-                if (!res.ok)
-                    throw new Error(
-                        `Request failed: ${res.status} ${res.statusText}`
-                    );
-                const json = await res.json();
-
-                const rawData = Array.isArray(json?.data) ? json.data : [];
-
-                // 🔑 Normalize API shape → ensure isHtml is a proper boolean
-                const data: MainItem[] = rawData
-                    .map((raw: any, idx: number) => ({
+                const data: MainItem[] = (await getMainItems())
+                    .map((raw: MainItem, idx: number) => ({
                         ...raw,
                         __index: idx,
-                        order:
-                            raw?.order === null || raw?.order === undefined
-                                ? undefined
-                                : Number(raw.order),
-                        isHtml:
-                            typeof raw.isHtml === "boolean"
-                                ? raw.isHtml
-                                : raw.isHTML === true ||
-                                  raw.isHTML === "true" ||
-                                  raw.isHTML === 1,
                     }))
                     .sort((a: any, b: any) => {
                         const ao = Number.isFinite(a.order)

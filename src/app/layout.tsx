@@ -1,15 +1,9 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
-import { Montserrat } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Registration from '@/components/Registration';
 import Footer from '@/components/Footer';
-
-const montserrat = Montserrat({
-	weight: '500',
-	subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
 	title: 'Youth Activism Nepal',
@@ -32,7 +26,7 @@ export default function RootLayout({
 					sizes="<generated>"
 				/>
 			</head>
-			<body className={`bg-offWhite ${montserrat.className}`}>
+			<body className="bg-offWhite font-sans">
 				<Navbar />
 				{/* <Registration /> */}
 				{children}

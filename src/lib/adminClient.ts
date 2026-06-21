@@ -50,6 +50,12 @@ export async function adminFetch(
     cache: "no-store",
   });
 
+  if (res.status === 401) {
+    clearAdminToken();
+    if (typeof window !== "undefined") {
+      window.location.href = "/admin/login";
+    }
+  }
+
   return res;
 }
-

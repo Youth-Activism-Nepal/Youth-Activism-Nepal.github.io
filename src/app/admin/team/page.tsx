@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
+import { normalizeTeamMember } from "@/lib/apiClient";
 
 type TeamMember = {
   id?: string;
@@ -46,10 +47,13 @@ export default function AdminTeamPage() {
       const res = await adminFetch("/admin/team", { method: "GET" });
       if (!res.ok) throw new Error(`Failed to load team (${res.status})`);
       const data = (await res.json()) as any[];
-      const normalized: TeamMember[] = data.map((doc) => ({
-        ...doc,
-        _mongoId: doc.id ?? doc._id,
-      }));
+      const normalized: TeamMember[] = data.map((doc) => {
+        const member = normalizeTeamMember(doc);
+        return {
+          ...member,
+          _mongoId: member.mongoId ?? member.id,
+        };
+      });
       setItems(normalized);
     } catch (err: any) {
       setError(err.message || "Failed to load team");
@@ -324,4 +328,3 @@ export default function AdminTeamPage() {
     </div>
   );
 }
-
