@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { adminFetch, getAdminToken } from "@/lib/adminClient";
 import { normalizeProject, type Project as ApiProject } from "@/lib/apiClient";
 
@@ -306,14 +307,11 @@ export default function AdminProjectsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Content
-              </label>
-              <textarea
-                className="w-full border rounded-md px-2 py-1.5 text-sm min-h-[120px]"
+              <RichTextEditor
+                label="Content"
                 value={form.content ?? ""}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, content: e.target.value }))
+                onChange={(value) =>
+                  setForm((f) => ({ ...f, content: value }))
                 }
                 placeholder="Project description shown on the detail page"
               />

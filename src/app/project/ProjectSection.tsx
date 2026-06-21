@@ -21,10 +21,85 @@ const parseImages = (images: string[] | string | undefined): string[] => {
   return [];
 };
 
+const ALLOWED_TAGS = new Set([
+  "a",
+  "b",
+  "blockquote",
+  "br",
+  "em",
+  "h2",
+  "h3",
+  "h4",
+  "i",
+  "li",
+  "ol",
+  "p",
+  "strong",
+  "u",
+  "ul",
+]);
+
+const ALLOWED_ATTRS: Record<string, Set<string>> = {
+  a: new Set(["href", "target", "rel"]),
+};
+
+const sanitizeHtml = (html: string): string => {
+  if (typeof window === "undefined" || !html.trim()) return "";
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  const cleanNode = (node: Node) => {
+    if (node.nodeType === Node.TEXT_NODE) return;
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      node.parentNode?.removeChild(node);
+      return;
+    }
+
+    const el = node as HTMLElement;
+    const tag = el.tagName.toLowerCase();
+
+    if (!ALLOWED_TAGS.has(tag)) {
+      const parent = el.parentNode;
+      if (!parent) return;
+      while (el.firstChild) {
+        parent.insertBefore(el.firstChild, el);
+      }
+      parent.removeChild(el);
+      return;
+    }
+
+    Array.from(el.attributes).forEach((attr) => {
+      const allowed = ALLOWED_ATTRS[tag];
+      if (!allowed?.has(attr.name)) {
+        el.removeAttribute(attr.name);
+      }
+    });
+
+    if (tag === "a") {
+      const href = el.getAttribute("href") ?? "";
+      if (!/^https?:\/\//i.test(href) && !href.startsWith("/")) {
+        el.removeAttribute("href");
+      } else {
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener noreferrer");
+      }
+    }
+
+    Array.from(el.childNodes).forEach(cleanNode);
+  };
+
+  Array.from(doc.body.childNodes).forEach(cleanNode);
+  return doc.body.innerHTML;
+};
+
 const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
   const images = parseImages(project.images);
   const fallbackImage = project.image || "/images/YANLOGO.png";
   const showCarousel = images.length > 1;
+  const sanitizedContent = sanitizeHtml(project.content ?? "");
+  const hasRichText = /<[^>]+>/.test(project.content ?? "");
 
   return (
     <section>
@@ -61,11 +136,18 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
           </p>
         )}
 
-        {project.content?.split("\n").map((para, i) => (
-          <p key={i} className="text-sm text-textBlue text-justify font-light pt-4">
-            {para.trim()}
-          </p>
-        ))}
+        {hasRichText ? (
+          <div
+            className="rich-text-content w-full pt-4 text-sm text-textBlue font-light"
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
+        ) : (
+          project.content?.split("\n").map((para, i) => (
+            <p key={i} className="text-sm text-textBlue text-justify font-light pt-4">
+              {para.trim()}
+            </p>
+          ))
+        )}
 
         {project.hashtags && (
           <p className="text-sm text-textBlue text-justify font-light pt-4">
