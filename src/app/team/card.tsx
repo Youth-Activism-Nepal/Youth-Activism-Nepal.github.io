@@ -27,10 +27,10 @@ export default function App({ Teams }: { Teams: ITeam[] }) {
 		<>
 			<div className="overflow-hidden mt-10 px-6">
 				<h1 className="flex text-4xl text-center font-black items-center justify-center text-red-600">
-					Meet Our Local Team
+					Meet Our Team
 				</h1>
 				<p className="text-sm py-2 px-6 sm:px-28 lg:w-[80%] mx-auto text-center text-textBlue">
-					Our local Youth Activism Nepal team is dedicated to empowering young
+					Our Youth Activism Nepal team is dedicated to empowering young
 					individuals, fostering leadership, and driving positive change within
 					the community.
 				</p>
