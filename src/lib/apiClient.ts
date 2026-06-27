@@ -20,6 +20,32 @@ export type Project = {
     mongoId?: string;
     image?: string;
     images?: string[] | string;
+    youtubeLink?: string;
+    googleFormUrl?: string;
+    startDate?: string;
+    endDate?: string;
+    isActive?: boolean;
+    phase?: "upcoming" | "active" | "past";
+    badge?: string;
+    name?: string;
+    role?: string;
+    heading?: string;
+    subheading?: string;
+    content?: string;
+    hashtags?: string;
+    title?: string;
+    description?: string;
+    url?: string;
+    extra?: Record<string, unknown> | null;
+};
+
+export type Blog = {
+    id?: string;
+    slug?: string;
+    mongoId?: string;
+    image?: string;
+    images?: string[] | string;
+    youtubeLink?: string;
     badge?: string;
     name?: string;
     role?: string;
@@ -44,6 +70,16 @@ export type TeamMember = {
     rank?: number;
 };
 
+export type Testimonial = {
+    id?: string;
+    mongoId?: string;
+    name: string;
+    image?: string;
+    social_url?: string;
+    involvement?: string;
+    testimonial: string;
+};
+
 export type Partner = {
     id?: string;
     mongoId?: string;
@@ -66,6 +102,46 @@ function parseNumber(value: unknown): number | undefined {
 
     const num = Number(value);
     return Number.isFinite(num) ? num : undefined;
+}
+
+function parseBoolean(value: unknown): boolean | undefined {
+    if (value === null || value === undefined || value === "") {
+        return undefined;
+    }
+
+    if (typeof value === "boolean") {
+        return value;
+    }
+
+    if (typeof value === "number") {
+        return value !== 0;
+    }
+
+    if (typeof value === "string") {
+        const normalized = value.trim().toLowerCase();
+        if (["true", "yes", "1", "active"].includes(normalized)) {
+            return true;
+        }
+        if (["false", "no", "0", "inactive"].includes(normalized)) {
+            return false;
+        }
+    }
+
+    return undefined;
+}
+
+function parseDateString(value: unknown): string | undefined {
+    if (typeof value !== "string") {
+        return undefined;
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return undefined;
+    }
+
+    const parsed = new Date(trimmed);
+    return Number.isNaN(parsed.getTime()) ? undefined : trimmed;
 }
 
 function toSlug(value: string): string {
@@ -137,11 +213,103 @@ export function normalizeProject(doc: any, index = 0): Project {
             : `project-${index + 1}`;
     const slug = doc?.id || doc?.slug || toSlug(fallbackName);
 
+    const startDate = parseDateString(doc?.startDate);
+    const endDate = parseDateString(doc?.endDate);
+
     return {
         ...doc,
         id: slug,
         slug,
         mongoId: doc?.mongo_id ?? doc?._id,
+        youtubeLink: doc?.youtubeLink,
+        googleFormUrl: doc?.googleFormUrl,
+        startDate,
+        endDate,
+        isActive: parseBoolean(doc?.isActive),
+        phase: getProjectPhase(
+            {
+                startDate,
+                endDate,
+                isActive: parseBoolean(doc?.isActive),
+            },
+            new Date()
+        ),
+        images: Array.isArray(doc?.images) || typeof doc?.images === "string"
+            ? doc.images
+            : undefined,
+    };
+}
+
+export function getProjectPhase(
+    project: Pick<Project, "startDate" | "endDate" | "isActive">,
+    now = new Date()
+): "upcoming" | "active" | "past" {
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
+
+    const start = project.startDate ? new Date(project.startDate) : null;
+    const end = project.endDate ? new Date(project.endDate) : null;
+
+    if (start && !Number.isNaN(start.getTime())) {
+        start.setHours(0, 0, 0, 0);
+    }
+    if (end && !Number.isNaN(end.getTime())) {
+        end.setHours(23, 59, 59, 999);
+    }
+
+    if (start && start > today) {
+        return "upcoming";
+    }
+
+    if (end && end < today) {
+        return "past";
+    }
+
+    if (start || end) {
+        return "active";
+    }
+
+    return project.isActive ? "active" : "past";
+}
+
+function getProjectSortTime(project: Project, phase: "upcoming" | "active" | "past"): number {
+    if (phase === "upcoming") {
+        return project.startDate ? new Date(project.startDate).getTime() : Number.MAX_SAFE_INTEGER;
+    }
+
+    if (phase === "active") {
+        if (project.endDate) return new Date(project.endDate).getTime();
+        if (project.startDate) return new Date(project.startDate).getTime();
+        return Number.MAX_SAFE_INTEGER;
+    }
+
+    if (project.endDate) return new Date(project.endDate).getTime() * -1;
+    if (project.startDate) return new Date(project.startDate).getTime() * -1;
+    return 0;
+}
+
+export function filterProjectsByPhase(
+    projects: Project[],
+    phase: "upcoming" | "active" | "past"
+): Project[] {
+    return projects
+        .filter((project) => getProjectPhase(project) === phase)
+        .sort((a, b) => getProjectSortTime(a, phase) - getProjectSortTime(b, phase));
+}
+
+export function normalizeBlog(doc: any, index = 0): Blog {
+    const fallbackName =
+        typeof doc?.name === "string" && doc.name.trim()
+            ? doc.name
+            : `blog-${index + 1}`;
+    const slug = doc?.id || doc?.slug || toSlug(fallbackName);
+
+    return {
+        ...doc,
+        id: slug,
+        slug,
+        mongoId: doc?.mongo_id ?? doc?._id,
+        youtubeLink: doc?.youtubeLink,
         images: Array.isArray(doc?.images) || typeof doc?.images === "string"
             ? doc.images
             : undefined,
@@ -155,6 +323,21 @@ export function normalizeTeamMember(doc: any): TeamMember {
         mongoId: doc?.mongo_id ?? doc?._id ?? doc?.id,
         year: Number(doc?.year),
         rank: parseNumber(doc?.rank),
+    };
+}
+
+export function normalizeTestimonial(doc: any): Testimonial {
+    return {
+        ...doc,
+        id: doc?.id ?? doc?.mongo_id ?? doc?._id,
+        mongoId: doc?.mongo_id ?? doc?._id ?? doc?.id,
+        name: String(doc?.name ?? ""),
+        image: typeof doc?.image === "string" ? doc.image : undefined,
+        social_url:
+            typeof doc?.social_url === "string" ? doc.social_url : undefined,
+        involvement:
+            typeof doc?.involvement === "string" ? doc.involvement : undefined,
+        testimonial: String(doc?.testimonial ?? ""),
     };
 }
 
@@ -191,6 +374,24 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     return project ? normalizeProject(project) : null;
 }
 
+export async function getBlogs(): Promise<Blog[]> {
+    const json = await getJson<Envelope<any[]>>("/data/Blogs");
+    return unwrapList(json).map((doc, index) => normalizeBlog(doc, index));
+}
+
+export async function getBlogBySlug(slug: string): Promise<Blog | null> {
+    const response = await apiFetch(`/data/Blogs/${encodeURIComponent(slug)}`);
+    if (response.status === 404) {
+        return null;
+    }
+    if (!response.ok) {
+        throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+    }
+    const json = (await response.json()) as Envelope<any> | any;
+    const blog = unwrapItem(json);
+    return blog ? normalizeBlog(blog) : null;
+}
+
 export async function getTeamMembers(): Promise<TeamMember[]> {
     const json = await getJson<Envelope<any[]>>("/data/Team");
     return unwrapList(json).map(normalizeTeamMember);
@@ -199,4 +400,9 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
 export async function getPartners(): Promise<Partner[]> {
     const json = await getJson<Envelope<any[]>>("/data/Partners");
     return unwrapList(json).map((doc, index) => normalizePartner(doc, index));
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+    const json = await getJson<Envelope<any[]>>("/data/Testimonials");
+    return unwrapList(json).map(normalizeTestimonial);
 }

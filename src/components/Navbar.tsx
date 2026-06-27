@@ -11,12 +11,16 @@ import {
   Link,
 } from "@nextui-org/react";
 import { YANLogo } from "@/components/YANLogo";
+import { filterProjectsByPhase, getBlogs, getProjects } from "@/lib/apiClient";
 import { usePathname } from "next/navigation";
 import "../app/globals.css";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [showBlogs, setShowBlogs] = useState(false);
+  const [showActiveCampaigns, setShowActiveCampaigns] = useState(false);
+  const [showUpcomingProjects, setShowUpcomingProjects] = useState(false);
   const pathname = usePathname();
 
   const menuItems: [string, string][] = [
@@ -26,6 +30,18 @@ export default function App() {
     ["/projects", "Projects"],
     ["/donate", "Donate"],
   ];
+
+  if (showActiveCampaigns) {
+    menuItems.splice(3, 0, ["/active-campaigns", "Active Campaigns"]);
+  }
+
+  if (showUpcomingProjects) {
+    menuItems.splice(showActiveCampaigns ? 4 : 3, 0, ["/upcoming-projects", "Upcoming Projects"]);
+  }
+
+  if (showBlogs) {
+    menuItems.splice(menuItems.length - 1, 0, ["/blogs", "Blogs"]);
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -40,6 +56,40 @@ export default function App() {
     );
     sections.forEach((s) => observer.observe(s));
     return () => sections.forEach((s) => observer.unobserve(s));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getBlogs()
+      .then((blogs) => {
+        if (!cancelled) {
+          setShowBlogs(blogs.length > 0);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setShowBlogs(false);
+        }
+      });
+
+    getProjects()
+      .then((projects) => {
+        if (!cancelled) {
+          setShowActiveCampaigns(filterProjectsByPhase(projects, "active").length > 0);
+          setShowUpcomingProjects(filterProjectsByPhase(projects, "upcoming").length > 0);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setShowActiveCampaigns(false);
+          setShowUpcomingProjects(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const isActive = (href: string) => {

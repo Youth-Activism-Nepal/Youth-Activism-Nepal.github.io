@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
+import TestimonialSection from "@/components/TestimonialSection";
 import { getMainItems, getProjects, type MainItem as ApiMainItem } from "@/lib/apiClient";
 
 type MainItem = ApiMainItem & {
@@ -356,6 +357,7 @@ export default function About() {
                         </div>
                     );
                 })}
+            {!loading && !error && <TestimonialSection />}
         </div>
     );
 }

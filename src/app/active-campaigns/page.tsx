@@ -5,7 +5,7 @@ import CardItem from "@/app/projects/card";
 import type { ITeam } from "@/app/projects/projectType";
 import { filterProjectsByPhase, getProjects } from "@/lib/apiClient";
 
-export default function Projects() {
+export default function ActiveCampaigns() {
     const cacheRef = useRef<ITeam[] | null>(null);
     const [teamList, setTeamList] = useState<ITeam[]>([]);
 
@@ -19,12 +19,12 @@ export default function Projects() {
             try {
                 const projects = filterProjectsByPhase(
                     (await getProjects()) as ITeam[],
-                    "past"
+                    "active"
                 ) as ITeam[];
                 cacheRef.current = projects;
                 setTeamList(projects);
             } catch (error) {
-                console.error("Failed to fetch projects:", error);
+                console.error("Failed to fetch active campaigns:", error);
             }
         }
 
@@ -35,9 +35,9 @@ export default function Projects() {
         <div className="bg-offWhite min-h-screen px-4">
             <CardItem
                 Teams={teamList}
-                title="Past Projects"
-                description="Browse completed projects and past initiatives from Youth Activism Nepal."
-                emptyText="No past projects available right now."
+                title="Active Campaigns"
+                description="Follow the campaigns and live initiatives Youth Activism Nepal is actively running now."
+                emptyText="No active campaigns are available right now."
             />
         </div>
     );

@@ -41,6 +41,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <NavLink href="/admin/projects" active={isActive("/admin/projects")}>
               Projects
             </NavLink>
+            <NavLink href="/admin/blogs" active={isActive("/admin/blogs")}>
+              Blogs
+            </NavLink>
+            <NavLink href="/admin/testimonials" active={isActive("/admin/testimonials")}>
+              Testimonials
+            </NavLink>
             <NavLink href="/admin/team" active={isActive("/admin/team")}>
               Team
             </NavLink>
@@ -99,4 +105,3 @@ function NavLink({
     </Link>
   );
 }
-

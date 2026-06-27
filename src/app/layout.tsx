@@ -4,6 +4,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Registration from '@/components/Registration';
+import DonateFooterCta from '@/components/DonateFooterCta';
 import Footer from '@/components/Footer';
 
 const montserrat = Montserrat({
@@ -38,6 +39,7 @@ export default function RootLayout({
 				<Navbar />
 				{/* <Registration /> */}
 				{children}
+				<DonateFooterCta />
 				<Footer />
 			</body>
 		</html>

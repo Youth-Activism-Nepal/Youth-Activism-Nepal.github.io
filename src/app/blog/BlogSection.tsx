@@ -1,11 +1,11 @@
 'use client';
 
 import React from "react";
-import ImageCarousel from "@/components/ui/ImageCarousel"; // ✅ adjust path if needed
-import { ITeam } from "@/app/projects/projectType";
+import ImageCarousel from "@/components/ui/ImageCarousel";
+import { IBlog } from "@/app/blogs/blogType";
 
-interface ProjectSectionProps {
-  project: ITeam;
+interface BlogSectionProps {
+  blog: IBlog;
 }
 
 const parseImages = (images: string[] | string | undefined): string[] => {
@@ -121,14 +121,13 @@ const sanitizeHtml = (html: string): string => {
   return doc.body.innerHTML;
 };
 
-const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
-  const images = parseImages(project.images);
-  const fallbackImage = project.image || "/images/YANLOGO.png";
+const BlogSection: React.FC<BlogSectionProps> = ({ blog }) => {
+  const images = parseImages(blog.images);
+  const fallbackImage = blog.image || "/images/YANLOGO.png";
   const showCarousel = images.length > 1;
-  const youtubeEmbedUrl = getYouTubeEmbedUrl(project.youtubeLink);
-  const sanitizedContent = sanitizeHtml(project.content ?? "");
-  const hasRichText = /<[^>]+>/.test(project.content ?? "");
-  const hasDates = !!project.startDate || !!project.endDate;
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(blog.youtubeLink);
+  const sanitizedContent = sanitizeHtml(blog.content ?? "");
+  const hasRichText = /<[^>]+>/.test(blog.content ?? "");
 
   return (
     <section>
@@ -138,7 +137,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
         ) : (
           <img
             src={images[0] || fallbackImage}
-            alt={project.name}
+            alt={blog.name}
             style={{
               maxHeight: "50vh",
               width: "100%",
@@ -158,7 +157,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
             <div className="relative w-full overflow-hidden rounded-lg" style={{ paddingTop: "56.25%" }}>
               <iframe
                 src={youtubeEmbedUrl}
-                title={project.name ? `${project.name} video` : "Project video"}
+                title={blog.name ? `${blog.name} video` : "Blog video"}
                 className="absolute inset-0 h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -168,35 +167,16 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
           </div>
         )}
 
-        {project.heading && (
+        {blog.heading && (
           <p className="font-bold text-3xl text-center bg-clip-text bg-gradient-to-r from-green-600 to-green-950">
-            {project.heading}
+            {blog.heading}
           </p>
         )}
 
-        {project.subheading && (
+        {blog.subheading && (
           <p className="w-full font-semibold text-2xl text-center text-cs50Yellow mt-3">
-            {project.subheading}
+            {blog.subheading}
           </p>
-        )}
-
-        {hasDates && (
-          <p className="mt-4 text-sm text-textBlue/80 text-center">
-            {project.startDate ? `Starts: ${project.startDate}` : ""}
-            {project.startDate && project.endDate ? " | " : ""}
-            {project.endDate ? `Ends: ${project.endDate}` : ""}
-          </p>
-        )}
-
-        {project.googleFormUrl && (
-          <a
-            href={project.googleFormUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center justify-center rounded-md bg-[#DB1920] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
-          >
-            Open Google Form
-          </a>
         )}
 
         {hasRichText ? (
@@ -205,16 +185,16 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
         ) : (
-          project.content?.split("\n").map((para, i) => (
+          blog.content?.split("\n").map((para, i) => (
             <p key={i} className="text-sm text-textBlue text-justify font-light pt-4">
               {para.trim()}
             </p>
           ))
         )}
 
-        {project.hashtags && (
+        {blog.hashtags && (
           <p className="text-sm text-textBlue text-justify font-light pt-4">
-            <strong>{project.hashtags}</strong>
+            <strong>{blog.hashtags}</strong>
           </p>
         )}
       </div>
@@ -222,4 +202,4 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
   );
 };
 
-export default ProjectSection;
+export default BlogSection;

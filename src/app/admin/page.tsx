@@ -45,7 +45,7 @@ export default function AdminDashboardPage() {
               Admin Dashboard
             </h1>
             <p className="text-sm text-gray-500">
-              Manage homepage content, projects, team, and partners.
+              Manage homepage content, projects, blogs, testimonials, team, and partners.
             </p>
           </div>
           <button
@@ -66,6 +66,16 @@ export default function AdminDashboardPage() {
             title="Projects"
             description="Create and update projects shown on the projects page and carousel."
             href="/admin/projects"
+          />
+          <AdminCard
+            title="Blogs"
+            description="Create and update blog entries shown on the blogs page and detail pages."
+            href="/admin/blogs"
+          />
+          <AdminCard
+            title="Testimonials"
+            description="Manage the testimonial carousel shown on the home page."
+            href="/admin/testimonials"
           />
           <AdminCard
             title="Team"
@@ -103,4 +113,3 @@ function AdminCard({ title, description, href }: AdminCardProps) {
     </Link>
   );
 }
-
