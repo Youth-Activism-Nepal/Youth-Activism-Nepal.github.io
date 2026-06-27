@@ -27,10 +27,18 @@ const getYouTubeEmbedUrl = (value?: string): string | null => {
   try {
     const url = new URL(value);
     const host = url.hostname.replace(/^www\./, "");
+    const parts = url.pathname.replace(/^\/+/, "").split("/").filter(Boolean);
 
     if (host === "youtube.com" || host === "m.youtube.com") {
       const videoId = url.searchParams.get("v");
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      if (parts[0] === "shorts" || parts[0] === "embed") {
+        const shortId = parts[1];
+        return shortId ? `https://www.youtube.com/embed/${shortId}` : null;
+      }
     }
 
     if (host === "youtu.be") {
@@ -39,6 +47,10 @@ const getYouTubeEmbedUrl = (value?: string): string | null => {
     }
 
     if (host === "youtube-nocookie.com") {
+      if (parts[0] === "embed") {
+        const videoId = parts[1];
+        return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : value;
+      }
       return value;
     }
   } catch {
@@ -152,21 +164,6 @@ const BlogSection: React.FC<BlogSectionProps> = ({ blog }) => {
       </div>
 
       <div className="flex flex-col justify-center items-center m-10 px-4 max-w-4xl mx-auto">
-        {youtubeEmbedUrl && (
-          <div className="w-full mb-8">
-            <div className="relative w-full overflow-hidden rounded-lg" style={{ paddingTop: "56.25%" }}>
-              <iframe
-                src={youtubeEmbedUrl}
-                title={blog.name ? `${blog.name} video` : "Blog video"}
-                className="absolute inset-0 h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        )}
-
         {blog.heading && (
           <p className="font-bold text-3xl text-center bg-clip-text bg-gradient-to-r from-green-600 to-green-950">
             {blog.heading}
@@ -196,6 +193,21 @@ const BlogSection: React.FC<BlogSectionProps> = ({ blog }) => {
           <p className="text-sm text-textBlue text-justify font-light pt-4">
             <strong>{blog.hashtags}</strong>
           </p>
+        )}
+
+        {youtubeEmbedUrl && (
+          <div className="w-full mt-8 flex justify-center">
+            <div className="relative aspect-video w-full max-w-xl overflow-hidden rounded-lg">
+              <iframe
+                src={youtubeEmbedUrl}
+                title={blog.name ? `${blog.name} video` : "Blog video"}
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
         )}
       </div>
     </section>
