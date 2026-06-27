@@ -42,10 +42,10 @@ export default function FooterSection() {
                             <p className="text-sm mt-4">
                                 <strong>Email:</strong>{" "}
                                 <a
-                                    href="mailto:youthactvismnepal@gmail.com"
+                                    href="mailto:info@youthactivismnepal.org.np"
                                     className="text-white underline"
                                 >
-                                    youthactvismnepal@gmail.com
+                                    info@youthactivismnepal.org.np
                                 </a>
                             </p>
                             <p className="text-sm">
