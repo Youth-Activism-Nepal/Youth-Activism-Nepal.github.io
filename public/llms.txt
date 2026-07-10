@@ -6,18 +6,21 @@ This website provides information about the organization, team, partners, projec
 
 ## Key Pages
 
-- https://youthactivismnepal.org.np/
-- https://youthactivismnepal.org.np/team/
-- https://youthactivismnepal.org.np/partners/
-- https://youthactivismnepal.org.np/projects/
-- https://youthactivismnepal.org.np/active-campaigns/
-- https://youthactivismnepal.org.np/upcoming-projects/
-- https://youthactivismnepal.org.np/blogs/
-- https://youthactivismnepal.org.np/donate/
+- [Homepage](https://youthactivismnepal.org.np/): Overview of Youth Activism Nepal, mission, activities, and impact.
+- [Team](https://youthactivismnepal.org.np/team/): Team members and leadership profiles.
+- [Partners](https://youthactivismnepal.org.np/partners/): Partner organizations and collaborators.
+- [Past Projects](https://youthactivismnepal.org.np/projects/): Completed projects and past initiatives.
+- [Active Campaigns](https://youthactivismnepal.org.np/active-campaigns/): Current campaigns and live initiatives.
+- [Upcoming Projects](https://youthactivismnepal.org.np/upcoming-projects/): Planned and upcoming projects.
+- [Blogs](https://youthactivismnepal.org.np/blogs/): Blog archive and updates.
+- [Donate](https://youthactivismnepal.org.np/donate/): Donation details and support information.
 
 ## Content Notes
 
 - Blog and project detail content is loaded dynamically from the backend API.
-- The sitemap is available at https://youthactivismnepal.org.np/sitemap.xml
-- Contact: https://youthactivismnepal.org.np/donate/
-- Email: info@youthactivismnepal.org.np
+- [Sitemap](https://youthactivismnepal.org.np/sitemap.xml): Index of public static pages.
+- [Contact and Support](https://youthactivismnepal.org.np/donate/): Donation details and contact information.
+
+## Optional
+
+- [llms.txt Proposal](https://llmstxt.org/): Background and format guidance for the llms.txt convention.
