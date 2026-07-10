@@ -1,0 +1,23 @@
+# Youth Activism Nepal
+
+> Youth Activism Nepal is a youth-focused nonprofit organization in Nepal working on civic engagement, leadership, community projects, campaigns, partnerships, and youth development.
+
+This website provides information about the organization, team, partners, projects, campaigns, blogs, and donation details.
+
+## Key Pages
+
+- https://youthactivismnepal.org.np/
+- https://youthactivismnepal.org.np/team/
+- https://youthactivismnepal.org.np/partners/
+- https://youthactivismnepal.org.np/projects/
+- https://youthactivismnepal.org.np/active-campaigns/
+- https://youthactivismnepal.org.np/upcoming-projects/
+- https://youthactivismnepal.org.np/blogs/
+- https://youthactivismnepal.org.np/donate/
+
+## Content Notes
+
+- Blog and project detail content is loaded dynamically from the backend API.
+- The sitemap is available at https://youthactivismnepal.org.np/sitemap.xml
+- Contact: https://youthactivismnepal.org.np/donate/
+- Email: info@youthactivismnepal.org.np

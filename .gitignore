@@ -1,5 +1,6 @@
 # build output
 dist
+out
 !.github/actions/*/dist
 .next
 target

@@ -1,103 +1,15 @@
-'use client';
+import type { Metadata } from "next";
+import ProjectPageClient from "./ProjectPageClient";
+import { buildMetadata } from "@/lib/seo";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import ProjectSection from "@/app/project/ProjectSection";
-import type { ITeam } from "@/app/projects/projectType";
-import { getProjectBySlug, getProjects } from "@/lib/apiClient";
+export const metadata: Metadata = buildMetadata({
+    title: "Project Details",
+    description:
+        "Read detailed information about Youth Activism Nepal projects, campaigns, and field activities.",
+    path: "/project",
+    keywords: ["Youth Activism Nepal project", "Nepal youth project details"],
+});
 
-const toSlug = (value: string): string =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-function Spinner() {
-  return (
-    <div className="flex items-center justify-center h-[60vh]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
-    </div>
-  );
-}
-
-/**
- * Page component only sets up Suspense (required for useSearchParams)
- */
-export default function ProjectPage() {
-  return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <Suspense fallback={<Spinner />}>
-        <ProjectPageInner />
-      </Suspense>
-    </main>
-  );
-}
-
-/**
- * All hooks that depend on search params live inside the Suspense boundary.
- */
-function ProjectPageInner() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const slug = useMemo(() => searchParams.get("slug") ?? "", [searchParams]);
-
-  const [data, setData] = useState<ITeam | null>(null);
-  const [state, setState] = useState<"idle" | "loading" | "error" | "done">("idle");
-
-  // redirect if slug missing
-  useEffect(() => {
-    if (!slug) router.replace("/projects");
-  }, [slug, router]);
-
-  useEffect(() => {
-    if (!slug) return;
-    let alive = true;
-
-    (async () => {
-      try {
-        setState("loading");
-        const project = await getProjectBySlug(slug);
-        if (alive && project) {
-          setData(project as ITeam);
-          setState("done");
-          return;
-        }
-
-        const list = await getProjects();
-        const fallbackProject = list.find((item: any) => {
-          const candidateName =
-            typeof item?.name === "string" && item.name.trim()
-              ? item.name
-              : "";
-          return (
-            item?.id === slug ||
-            item?._id === slug ||
-            toSlug(candidateName) === slug
-          );
-        });
-
-        if (alive && fallbackProject) {
-          setData(fallbackProject as ITeam);
-          setState("done");
-        } else if (alive) {
-          router.replace("/projects");
-        }
-      } catch (e) {
-        console.error("Failed to fetch project:", e);
-        if (alive) router.replace("/projects");
-      }
-    })();
-
-    return () => {
-      alive = false;
-    };
-  }, [slug, router]);
-
-  if (!slug) return null;
-
-  if (state === "loading") return <Spinner />;
-  if (state === "done" && data) return <ProjectSection project={data} />;
-
-  return null;
+export default function Page() {
+    return <ProjectPageClient />;
 }

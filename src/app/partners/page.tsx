@@ -1,36 +1,15 @@
-"use client";
+import type { Metadata } from "next";
+import PartnersPageClient from "./PartnersPageClient";
+import { buildMetadata } from "@/lib/seo";
 
-import React, { useEffect, useRef, useState } from "react";
-import CardItem from "@/app/partners/card";
-import { PartnerType } from "@/app/partners/partnerType";
-import { getPartners } from "@/lib/apiClient";
+export const metadata: Metadata = buildMetadata({
+    title: "Partners",
+    description:
+        "See the organizations and collaborators working with Youth Activism Nepal to expand youth impact in Nepal.",
+    path: "/partners",
+    keywords: ["Youth Activism Nepal partners", "Nepal partner organizations", "nonprofit collaboration Nepal"],
+});
 
-export default function Partners() {
-  const cacheRef = useRef<PartnerType[] | null>(null);
-  const [partnerList, setPartnerList] = useState<PartnerType[]>([]);
-
-  useEffect(() => {
-    if (cacheRef.current) {
-      setPartnerList(cacheRef.current);
-      return;
-    }
-
-    async function fetchPartners() {
-      try {
-        const partners = (await getPartners()) as PartnerType[];
-        cacheRef.current = partners;
-        setPartnerList(partners);
-      } catch (error) {
-        console.error("Failed to fetch partners:", error);
-      }
-    }
-
-    fetchPartners();
-  }, []);
-
-  return (
-    <div className="bg-offWhite min-h-[75vh] px-4">
-      <CardItem Partners={partnerList} />
-    </div>
-  );
+export default function Page() {
+    return <PartnersPageClient />;
 }
