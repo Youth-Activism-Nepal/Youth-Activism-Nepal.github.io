@@ -88,6 +88,16 @@ export default function FooterSection() {
             </section>
             <p className="text-sm text-center text-white py-4">
                 © Copyright 2024, Youth Activism Nepal. All rights reserved.
+                <br />
+                Designed and Maintained by{" "}
+                <a
+                    href="https://dhirajkc195.com.np"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                >
+                    DKC195
+                </a>
             </p>
         </div>
     );
