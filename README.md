@@ -5,13 +5,13 @@
 1. Run the following command to install the required dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 2. Run the following command to start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 
 ```
 
