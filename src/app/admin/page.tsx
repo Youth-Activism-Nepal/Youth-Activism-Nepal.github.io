@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
             href="/admin/partners"
           />
           <AdminCard
-            title="Financial Reports"
+            title="Reports"
             description="Publish and manage Google Drive links for financial reports."
             href="/admin/financial-reports"
           />

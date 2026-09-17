@@ -17,7 +17,7 @@ export default function TransparencyPageClient() {
         <h1 className="mt-3 text-4xl font-black text-textBlue sm:text-5xl">Transparency</h1>
         <p className="mt-5 max-w-2xl text-textBlue/80">We are committed to sharing clear information about our work, finances, and accountability.</p>
         <section className="mt-10 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-2xl font-bold text-textBlue">Financial Reports</h2>
+          <h2 className="text-2xl font-bold text-textBlue">Reports</h2>
           {reports.length === 0 ? (
             <p className="mt-3 text-textBlue/75">Our financial reports will be published here as they become available.</p>
           ) : (

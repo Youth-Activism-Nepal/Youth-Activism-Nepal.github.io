@@ -54,7 +54,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               Partners
             </NavLink>
             <NavLink href="/admin/financial-reports" active={isActive("/admin/financial-reports")}>
-              Financial Reports
+              Reports
             </NavLink>
           </div>
 
