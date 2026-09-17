@@ -1,20 +1,28 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
+import ImageCarousel, { type CarouselEvent } from "@/components/ui/ImageCarousel"; // adjust path if needed
 import { getProjects } from "@/lib/apiClient";
 
 export default function Donate() {
     const [images, setImages] = useState<string[]>([]);
+    const [carouselEvents, setCarouselEvents] = useState<CarouselEvent[]>([]);
 
     useEffect(() => {
         getProjects()
             .then((projects) => {
                 if (projects.length) {
-                    const imageUrls = projects
-                        .map((project) => project.image)
-                        .filter((url): url is string => !!url);
-                    setImages(imageUrls);
+                    const projectsWithImages = projects.filter((project) =>
+                        !!project.image
+                    );
+                    setImages(projectsWithImages.map((project) => project.image!));
+                    setCarouselEvents(
+                        projectsWithImages.map((project) => ({
+                            name: project.name,
+                            startDate: project.startDate,
+                            endDate: project.endDate,
+                        }))
+                    );
                 }
             })
             .catch((error) => {
@@ -43,7 +51,7 @@ export default function Donate() {
 
                     {images.length > 0 && (
                         <div className="mt-8">
-                            <ImageCarousel images={images} />
+                            <ImageCarousel images={images} events={carouselEvents} />
                         </div>
                     )}
                 </div>

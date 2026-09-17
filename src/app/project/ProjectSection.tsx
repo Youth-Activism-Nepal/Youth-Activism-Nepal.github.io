@@ -146,7 +146,14 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ project }) => {
     <section>
       <div className="flex flex-col justify-center items-center max-w-4xl mx-auto py-8">
         {showCarousel ? (
-          <ImageCarousel images={images} />
+          <ImageCarousel
+            images={images}
+            events={images.map(() => ({
+              name: project.name,
+              startDate: project.startDate,
+              endDate: project.endDate,
+            }))}
+          />
         ) : (
           <img
             src={images[0] || fallbackImage}

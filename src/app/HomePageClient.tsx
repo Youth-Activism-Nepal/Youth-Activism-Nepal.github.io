@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import ImageCarousel from "@/components/ui/ImageCarousel"; // adjust path if needed
+import ImageCarousel, { type CarouselEvent } from "@/components/ui/ImageCarousel"; // adjust path if needed
 import TestimonialSection from "@/components/TestimonialSection";
 import { getMainItems, getProjects, type MainItem as ApiMainItem } from "@/lib/apiClient";
 
@@ -12,14 +12,14 @@ type MainItem = ApiMainItem & {
 
 type Section =
     | { kind: "single"; items: MainItem[] }
-    | { kind: "group"; together: string; items: MainItem[] }
-    | { kind: "images" }; // special marker for the carousel section
+    | { kind: "group"; together: string; items: MainItem[] };
 
 export default function About() {
     const [items, setItems] = useState<MainItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [images, setImages] = useState<string[]>([]);
+    const [carouselEvents, setCarouselEvents] = useState<CarouselEvent[]>([]);
 
     // keep these so purge never removes bg classes we use dynamically
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,11 +35,6 @@ export default function About() {
     };
 
     const sectionMinHeight = (section: Section) => {
-        if (section.kind === "images") {
-            // Let the images section size itself to its content
-            return {};
-        }
-
         const heights = section.items.map((it) =>
             heightVH(it?.height_vh ?? it?.height)
         );
@@ -58,10 +53,17 @@ export default function About() {
             try {
                 const projects = await getProjects();
                 if (!cancelled && projects.length) {
-                    const imageUrls = projects
-                        .map((project: any) => project.image)
-                        .filter((url: string) => !!url);
-                    setImages(imageUrls);
+                    const projectsWithImages = projects.filter((project) =>
+                        !!project.image
+                    );
+                    setImages(projectsWithImages.map((project) => project.image!));
+                    setCarouselEvents(
+                        projectsWithImages.map((project) => ({
+                            name: project.name,
+                            startDate: project.startDate,
+                            endDate: project.endDate,
+                        }))
+                    );
                 }
             } catch {
                 // Non-blocking: if carousel API is unreachable, keep page usable.
@@ -111,8 +113,7 @@ export default function About() {
         };
     }, []);
 
-    // Group consecutive items with the same non-empty `together`
-    // and treat { id: "Images" } as a special "images" section
+    // Group consecutive items with the same non-empty `together`.
     const sections: Section[] = useMemo(() => {
         const out: Section[] = [];
         let i = 0;
@@ -121,9 +122,8 @@ export default function About() {
             const current = items[i];
             const id = (current.id || "").trim().toLowerCase();
 
-            // Special marker for the carousel section
+            // The carousel is always shown at the top of the home page.
             if (id === "images") {
-                out.push({ kind: "images" });
                 i++;
                 continue;
             }
@@ -156,6 +156,14 @@ export default function About() {
 
     return (
         <div className="px-4 mx-auto sm:px-6 lg:px-8">
+            {images.length > 0 && (
+                <section className="bg-offWhite w-screen relative left-1/2 right-1/2 -mx-[50vw]">
+                    <div className="px-4 py-10 sm:px-6 lg:px-8 xl:px-12">
+                        <ImageCarousel images={images} events={carouselEvents} />
+                    </div>
+                </section>
+            )}
+
             {/* Loading */}
             {loading && (
                 <div
@@ -189,36 +197,6 @@ export default function About() {
                 !error &&
                 sections.map((section, sIdx) => {
                     const bgClass = getBgClass(sIdx);
-
-                    // Special "Images" section: render Activities / Carousel here
-                    if (section.kind === "images") {
-                        return (
-                            <div
-                                key={`section-images-${sIdx}`}
-                                className={`${bgClass} w-screen relative left-1/2 right-1/2 -mx-[50vw] flex items-center`}
-                            >
-                                <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-10 w-full max-w-7xl mx-auto">
-                                    <div
-                                        id="images"
-                                        className="h-full text-center items-center bg-white p-6 sm:px-6 md:px-8 lg:px-24 xl:px-32 sm:mt-0 mt-10"
-                                    >
-                                        <div className="flex flex-col justify-center items-center m-10">
-                                            <h1 className="flex text-5xl m-5 font-black items-center justify-center text-red-600 sm:text-3xl lg:text-5xl">
-                                                Our Activities
-                                            </h1>
-                                            {images.length > 0 && (
-                                                <div className="w-full mb-6">
-                                                    <ImageCarousel
-                                                        images={images}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    }
 
                     const isGroup = section.kind === "group";
 

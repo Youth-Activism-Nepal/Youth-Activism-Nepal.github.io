@@ -5,16 +5,57 @@ import Image from "next/image";
 
 interface Props {
   images: string[];
+  events?: CarouselEvent[];
 }
 
-export default function ImageCarousel({ images }: Props) {
+export type CarouselEvent = {
+  name?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+function shuffleImages<T>(images: T[]) {
+  const shuffled = [...images];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+
+  return shuffled;
+}
+
+export default function ImageCarousel({ images, events }: Props) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1); // 1 for next, -1 for prev
-  const total = images.length;
+  const [shuffledItems, setShuffledItems] = useState(() =>
+    images.map((image, index) => ({
+      image,
+      event: events?.[index],
+    }))
+  );
+  const total = shuffledItems.length;
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setShuffledItems(
+      shuffleImages(
+        images.map((image, index) => ({
+          image,
+          event: events?.[index],
+        }))
+      )
+    );
+    setCurrent(0);
+  }, [images, events]);
 
   // Auto-advance every 7 seconds
   useEffect(() => {
+    if (total <= 1) return;
+
     timeoutRef.current = setTimeout(() => {
       goNext();
     }, 7000);
@@ -34,11 +75,10 @@ export default function ImageCarousel({ images }: Props) {
   };
 
   return (
-    <div
-      className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-lg h-[30vh] sm:h-[45vh] md:h-[50vh] lg:h-[50vh] xl:h-[50vh] 2xl:h-[50vh]"
-    >
-      <div className="relative h-full">
-        {images.map((src, index) => {
+    <div className="relative w-full max-w-4xl mx-auto">
+      <div className="relative overflow-hidden rounded-lg h-[30vh] sm:h-[45vh] md:h-[50vh] lg:h-[50vh] xl:h-[50vh] 2xl:h-[50vh]">
+        <div className="relative h-full">
+          {shuffledItems.map(({ image: src }, index) => {
           // Determine position relative to current slide
           let translateX = 100; // default offscreen right
           let zIndex = 10;
@@ -78,31 +118,55 @@ export default function ImageCarousel({ images }: Props) {
               />
             </div>
           );
-        })}
+          })}
+        </div>
+
+        {/* Buttons container */}
+        <div className="absolute inset-0 flex justify-between items-center px-4 z-30 pointer-events-none">
+          <button
+            onClick={goPrev}
+            aria-label="Previous Slide"
+            className="bg-white bg-opacity-70 p-3 rounded-full shadow pointer-events-auto select-none"
+          >
+            ⬅
+          </button>
+          <button
+            onClick={goNext}
+            aria-label="Next Slide"
+            className="bg-white bg-opacity-70 p-3 rounded-full shadow pointer-events-auto select-none"
+          >
+            ➡
+          </button>
+        </div>
+
+        {/* Pagination */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white bg-opacity-70 rounded-full px-3 py-1 text-xs z-30 select-none">
+          {current + 1} / {total}
+        </div>
       </div>
 
-      {/* Buttons container */}
-      <div className="absolute inset-0 flex justify-between items-center px-4 z-30 pointer-events-none">
-        <button
-          onClick={goPrev}
-          aria-label="Previous Slide"
-          className="bg-white bg-opacity-70 p-3 rounded-full shadow pointer-events-auto select-none"
-        >
-          ⬅
-        </button>
-        <button
-          onClick={goNext}
-          aria-label="Next Slide"
-          className="bg-white bg-opacity-70 p-3 rounded-full shadow pointer-events-auto select-none"
-        >
-          ➡
-        </button>
-      </div>
-
-      {/* Pagination */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white bg-opacity-70 rounded-full px-3 py-1 text-xs z-30 select-none">
-        {current + 1} / {total}
-      </div>
+      {(shuffledItems[current]?.event?.name ||
+        shuffledItems[current]?.event?.startDate ||
+        shuffledItems[current]?.event?.endDate) && (
+        <div className="px-4 pt-3 text-center">
+          {shuffledItems[current].event?.name && (
+            <p className="font-semibold text-textBlue">
+              {shuffledItems[current].event.name}
+            </p>
+          )}
+          {(shuffledItems[current].event?.startDate ||
+            shuffledItems[current].event?.endDate) && (
+            <p className="mt-1 text-sm text-textBlue/60">
+              {shuffledItems[current].event?.startDate ?? ""}
+              {shuffledItems[current].event?.startDate &&
+                shuffledItems[current].event?.endDate
+                ? " - "
+                : ""}
+              {shuffledItems[current].event?.endDate ?? ""}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
