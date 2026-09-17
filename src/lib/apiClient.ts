@@ -90,6 +90,19 @@ export type Partner = {
     description?: string;
 };
 
+export type FinancialReport = {
+    id?: string;
+    mongoId?: string;
+    title: string;
+    organization: string;
+    fiscal_year: string;
+    drive_url: string;
+    report_type?: string;
+    description?: string;
+    report_date?: string;
+    published: boolean;
+};
+
 type Envelope<T> = {
     data?: T;
     project?: T;
@@ -351,6 +364,22 @@ export function normalizePartner(doc: any, index = 0): Partner {
     };
 }
 
+export function normalizeFinancialReport(doc: any): FinancialReport {
+    return {
+        ...doc,
+        id: doc?.id ?? doc?.mongo_id ?? doc?._id,
+        mongoId: doc?.mongo_id ?? doc?._id ?? doc?.id,
+        title: String(doc?.title ?? ""),
+        organization: String(doc?.organization ?? ""),
+        fiscal_year: String(doc?.fiscal_year ?? ""),
+        drive_url: String(doc?.drive_url ?? ""),
+        report_type: doc?.report_type,
+        description: doc?.description,
+        report_date: doc?.report_date,
+        published: doc?.published !== false,
+    };
+}
+
 export async function getMainItems(): Promise<MainItem[]> {
     const json = await getJson<Envelope<any[]>>("/data/Main");
     return unwrapList(json).map(normalizeMainItem);
@@ -405,4 +434,9 @@ export async function getPartners(): Promise<Partner[]> {
 export async function getTestimonials(): Promise<Testimonial[]> {
     const json = await getJson<Envelope<any[]>>("/data/Testimonials");
     return unwrapList(json).map(normalizeTestimonial);
+}
+
+export async function getFinancialReports(): Promise<FinancialReport[]> {
+    const json = await getJson<Envelope<any[]>>("/data/FinancialReports");
+    return unwrapList(json).map(normalizeFinancialReport);
 }

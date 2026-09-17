@@ -53,6 +53,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <NavLink href="/admin/partners" active={isActive("/admin/partners")}>
               Partners
             </NavLink>
+            <NavLink href="/admin/financial-reports" active={isActive("/admin/financial-reports")}>
+              Financial Reports
+            </NavLink>
           </div>
 
           <div className="flex items-center gap-3 text-xs sm:text-sm">
